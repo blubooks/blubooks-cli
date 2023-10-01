@@ -36,16 +36,13 @@ defineProps({
 </script>
 
 <template>
-    <ul class="character-list">
-
+    <ul class="bl-nav-ul">
     <template v-for="page of pages" :key="page.link">
-     
-
         <li>
             <div class="name">
                 
-                <router-link v-if="page.link" :to="base + page.link">
-            {{  page.title }} (<span v-if="base + page.link == route.path">{{ route.path }}</span>)
+                <router-link v-if="page.link" :to="page.link">
+            {{  page.title }} (<span v-if="page.link == route.path">{{ route.path }}</span>)
             </router-link>
             <span v-else>{{ page.title }}</span>
             </div>

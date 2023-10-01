@@ -4,13 +4,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: "/",
+    name: "home",
     meta: { 
       requiresAuth: true
     },
     component: () => import("../views/Home.vue"),
   },
   {
-    name: "BadNotFound",
+    name: "home",
     path: "/:pathMatch(.*)",
     component: () => import("../views/Home.vue"),
   }    
@@ -18,7 +19,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory("/public/"),
+  history: createWebHistory(),
   //mode: 'history', 
   routes,
 })

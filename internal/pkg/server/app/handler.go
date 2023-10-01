@@ -24,7 +24,7 @@ func (serverApp *App) HandleIndex(res http.ResponseWriter, req *http.Request) {
 
 	res.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
-	err := mainApp.Build()
+	err := mainApp.Build(true)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		log.Printf("Fehler: %v", err)
@@ -95,16 +95,23 @@ func (serverApp *App) HandleClient(w http.ResponseWriter, r *http.Request) {
 		FileNotFound:          false,
 	}
 
-	///wwwFiles := http.Dir("public")
+	/*
+		http.FileServer(http.Dir("public")).ServeHTTP(&frw, r)
 
-	//fileServer(r, "/assets", assetsDir)
-	fs := http.FileServer(http.Dir("client"))
-	//http.StripPrefix("/public", fs).ServeHTTP(w, r)
+		if frw.FileNotFound {
+			b, _ := os.ReadFile("public/index.html")
+			w.Header().Set("Content-Type", "text/html")
+			w.Write(b)
+			return
+		}
+	*/
+
+	fs := http.FileServer(http.Dir("client/default"))
 
 	http.StripPrefix("/public", fs).ServeHTTP(&frw, r)
 
 	if frw.FileNotFound {
-		b, _ := os.ReadFile("client/index.html")
+		b, _ := os.ReadFile("client/default/index.html")
 		w.Header().Set("Content-Type", "text/html")
 		w.Write(b)
 		return

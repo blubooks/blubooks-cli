@@ -10,8 +10,7 @@
   - [page 1.2](page-1/page2.md)
 * [page 3](page-3.md)
 
-<!--
 ***
+
 * [page 4](page-4)
 * [page 5](page-5)
--->

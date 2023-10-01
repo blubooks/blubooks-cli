@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/blubooks/blubooks-cli/pkg/tools"
+	"github.com/segmentio/ksuid"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/text"
@@ -19,6 +20,7 @@ const (
 )
 
 type Page struct {
+	Id         string  `json:"id"`
 	Set        bool    `json:"-"`
 	Parent     *Page   `json:"-"`
 	ParentLink *string `json:"parent,omitempty"`
@@ -32,6 +34,7 @@ type Page struct {
 
 type Navi struct {
 	Title string `json:"title,omitempty"`
+	Id    string `json:"id"`
 	Pages []Page `json:"pages,omitempty"`
 }
 
@@ -68,6 +71,7 @@ func list(node ast.Node, initLevel int, page *Page, source *[]byte) {
 					pg.Level = level
 					pg.Parent = page
 					pg.ParentLink = createLink(page.Link)
+					pg.Id = ksuid.New().String()
 
 					listitemlink(&pg, n.FirstChild(), source)
 
@@ -100,6 +104,8 @@ func listitemlink(page *Page, node ast.Node, source *[]byte) {
 
 				page.Title = &titleStr
 				page.DataLink = &linkStr
+				page.Id = ksuid.New().String()
+
 				page.Link = createLink(&linkStr)
 
 			}
@@ -146,6 +152,7 @@ func genNavi() (*Navi, error) {
 				h := n.(*ast.Heading)
 				if h.Level == 1 && navi.Title == "" {
 					navi.Title = string(n.Text([]byte(source)))
+					navi.Id = ksuid.New().String()
 				} else if h.Level == 2 {
 
 					if entry.Set {
@@ -176,6 +183,7 @@ func genNavi() (*Navi, error) {
 
 					pg := Page{}
 					pg.Set = true
+					pg.Id = ksuid.New().String()
 					pg.Type = TypeMenuItem
 					pg.Level = listLevel
 					listitemlink(&pg, n.FirstChild(), &source)

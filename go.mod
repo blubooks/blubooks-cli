@@ -3,8 +3,12 @@ module github.com/blubooks/blubooks-cli
 go 1.20
 
 require (
+	github.com/fundipper/goldmark-replacer v0.0.3 // indirect
 	github.com/go-chi/chi v1.5.5 // indirect
 	github.com/go-chi/chi/v5 v5.0.10 // indirect
 	github.com/go-chi/cors v1.2.1 // indirect
+	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/yuin/goldmark v1.5.6 // indirect
+	github.com/yuin/goldmark-meta v1.1.0 // indirect
+	gopkg.in/yaml.v2 v2.3.0 // indirect
 )

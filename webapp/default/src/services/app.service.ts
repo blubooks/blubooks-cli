@@ -14,6 +14,14 @@ class AppService {
     return api.get("api/navi.json").finally(() => {
       appStore.endLoad()
     });
+  }
+  loadJson(filename: string) {
+
+  const appStore = useAppStore()
+  appStore.startLoading()
+  return api.get("api/" + filename).finally(() => {
+    appStore.endLoad()
+  });
 }
 
 }
