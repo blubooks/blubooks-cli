@@ -16,6 +16,7 @@ import Navi from '../components/Navi.vue'
 const appStore = useAppStore()
 
 onMounted(() => {
+   
   appStore.loadNavi().then() 
 });
 

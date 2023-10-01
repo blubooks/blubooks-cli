@@ -7,7 +7,7 @@ defineProps<{ msg: string }>()
  async  function getData() {
       try {
         const response = await axios.get(
-          '/public/api/navi.json'
+          '/api/navi.json'
         );
         console.log(response)
         // JSON responses are automatically parsed.

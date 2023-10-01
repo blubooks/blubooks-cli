@@ -18,8 +18,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
-  //mode: 'history',
+  history: createWebHistory("/public/"),
+  //mode: 'history', 
   routes,
 })
 

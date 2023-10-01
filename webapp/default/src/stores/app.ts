@@ -2,6 +2,7 @@
 
 import { defineStore } from 'pinia'
 import appService from '../services/app.service'
+import  { ModelNavi } from '../models/navi'
 
 
 /*
@@ -17,7 +18,7 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     isRequesting: false,
     isLoading: false,
-    navi: {} as any,
+    navi: {} as ModelNavi,
 
   }),
   getters: {
@@ -36,7 +37,7 @@ export const useAppStore = defineStore('app', {
       return appService.navi().then(
         (response: any) => {
           
-          this.navi = response.data
+          this.navi = <ModelNavi>response.data
        
         },
         (err: any) => {

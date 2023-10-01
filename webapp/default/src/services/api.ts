@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const path = "/public"
+const path = "./"
 
 const instance = axios.create({
   //baseURL: "http://dev.cidb.de:4061/api/v1",

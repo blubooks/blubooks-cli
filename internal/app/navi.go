@@ -39,11 +39,11 @@ func createLink(link *string) *string {
 	if link != nil {
 
 		if filepath.Base(*link) == "README.md" {
-			l := filepath.Dir(*link)
+			l := "/" + filepath.Dir(*link)
 			return &l
 		}
 		l := strings.TrimSuffix(*link, filepath.Ext(*link))
-		l = tools.SetLastLash(l)
+		l = "/" + tools.SetLastLash(l)
 
 		return &l
 
