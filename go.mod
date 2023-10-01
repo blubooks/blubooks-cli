@@ -10,5 +10,6 @@ require (
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/yuin/goldmark v1.5.6 // indirect
 	github.com/yuin/goldmark-meta v1.1.0 // indirect
+	go.abhg.dev/goldmark/toc v0.7.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )

@@ -10,6 +10,10 @@ import (
 	"strings"
 
 	"github.com/blubooks/blubooks-cli/pkg/goldmark/baseurl"
+	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/text"
+	"go.abhg.dev/goldmark/toc"
+
 	"github.com/blubooks/blubooks-cli/pkg/tools"
 	replacer "github.com/fundipper/goldmark-replacer"
 	"github.com/yuin/goldmark"
@@ -23,10 +27,17 @@ func New() *App {
 	return &App{}
 }
 
+type PageTocItem struct {
+	Title string        `json:"title,omitempty"`
+	ID    string        `json:"id,omitempty"`
+	Items []PageTocItem `json:"items,omitempty"`
+}
+
 type PageContent struct {
-	Title string `json:"title,omitempty"`
-	Html  string `json:"html"`
-	Id    string `json:"id"`
+	Title string        `json:"title,omitempty"`
+	Html  string        `json:"html"`
+	TOC   []PageTocItem `json:"toc"`
+	Id    string        `json:"id"`
 }
 
 func Build(dev bool) error {
@@ -78,12 +89,13 @@ func Build(dev bool) error {
 
 func writeJson(filename string, id string) {
 	var err error
-	content, err := loadMarkdown(filename)
+	var c PageContent
+
+	err = loadMarkdown(filename, &c)
 	if err != nil {
 		log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
 	}
-	var c PageContent
-	c.Html = content.String()
+
 	c.Id = id
 	cJson, err := json.Marshal(c)
 	if err != nil {
@@ -110,21 +122,34 @@ func page(pages []Page) {
 	}
 }
 
-func loadMarkdown(filename string) (bytes.Buffer, error) {
+func tocElements(items *toc.Items) []PageTocItem {
+	var its []PageTocItem
+	for _, item := range *items {
+		t := PageTocItem{
+			Title: string(item.Title),
+			ID:    string(item.ID),
+		}
+		if item.Items != nil {
+			t.Items = tocElements(&item.Items)
+		}
+		its = append(its, t)
+
+	}
+
+	return its
+
+}
+
+func loadMarkdown(filename string, content *PageContent) error {
 	var buf bytes.Buffer
 
 	source, err := os.ReadFile("data/content/" + filename)
 	if err != nil {
-		return buf, err
+		return err
 	}
 
-	/*
-		str := string(source)
-		re := regexp.MustCompile("page3")
-		newStr := re.ReplaceAllString(str, "PAGE3")
-	*/
-
 	markdown := goldmark.New(
+		goldmark.WithParserOptions(parser.WithAutoHeadingID()),
 		goldmark.WithExtensions(
 			meta.Meta,
 			replacer.NewExtender(
@@ -140,8 +165,38 @@ func loadMarkdown(filename string) (bytes.Buffer, error) {
 			baseurl.NewExtender("", "files/")),
 	)
 
-	if err := markdown.Convert(source, &buf); err != nil {
-		return buf, err
+	doc := markdown.Parser().Parse(text.NewReader(source))
+
+	tree, err := toc.Inspect(doc, source, toc.MinDepth(2), toc.MaxDepth(4), toc.Compact(true))
+	if err == nil {
+		pageTocItems := tocElements(&tree.Items)
+		/*
+			for _, s := range tree.Items {
+				log.Println("title" + string(s.Title))
+				for _, s1 := range s.Items {
+					log.Println("title1" + string(s1.Title))
+
+				}
+			}
+		*/
+
+		list := toc.RenderList(tree)
+
+		if list != nil {
+			var tocBuf bytes.Buffer
+			markdown.Renderer().Render(&tocBuf, source, list)
+
+			//content.TOC = tocBuf.String()
+			content.TOC = pageTocItems
+
+		}
+
 	}
-	return buf, nil
+
+	if err := markdown.Convert(source, &buf); err != nil {
+		return err
+	}
+	content.Html = buf.String()
+
+	return nil
 }

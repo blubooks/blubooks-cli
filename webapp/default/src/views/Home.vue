@@ -17,15 +17,14 @@
                 <div class="bl-page-inner">
                     <div id="bl-content">
                         <div class="bl-content-inner">
-                            <div class="markdown-body" v-if="appStore.content" v-html="appStore.content.html">
-                            </div>
-                        
-                        </div>
-                        
+                            <div class="markdown-body" v-if="appStore.content" v-html="appStore.content.html" />
+                        </div>                        
                     </div>            
             
-                    <aside id="bl-sidebar">
-                        Side
+                    <aside id="bl-sidebar" >
+                        <div v-if="appStore.content.toc">
+                            <Toc :items="appStore.content.toc"  @scrolling="scrolling" />
+                        </div>
                     </aside>
                 </div>
 
@@ -38,11 +37,18 @@ import {onMounted } from 'vue'
 import { useAppStore } from "../stores/app";
 import Navi from '../components/Navi.vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
+import Toc from '../components/Toc.vue';
 
 
 const appStore = useAppStore()
 const route = useRoute();
+function scrolling(id: string) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.scrollIntoView({behavior: "smooth"});
 
+    }
+}
 
 /*
 onBeforeRouteLeave((to, from) => {
@@ -57,6 +63,8 @@ onBeforeRouteUpdate( (to, from) => {
         loadData(to.path)
         }
     })
+
+
 
 function loadData(path: string) {
 

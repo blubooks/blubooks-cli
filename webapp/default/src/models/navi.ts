@@ -9,6 +9,7 @@ export type ModelNavi = {
 
 export type ModelContent = {
     html:string
+    toc: Array<ModelToc>
     id: string
 };
 
@@ -22,5 +23,11 @@ export type ModelPage = {
     link?: string
     parent?: string
     pages: Array<ModelPage>
+
+};
+export type ModelToc = {
+    id: string
+    title: string
+    items: Array<ModelToc>
 
 };
