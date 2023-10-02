@@ -19,6 +19,9 @@ func SetLastLash(text string) string {
 }
 
 func SetFirstLash(text string) string {
+	if text == "" {
+		return "/"
+	}
 	first := text[0:1]
 
 	if first != "/" {

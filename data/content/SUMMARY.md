@@ -1,17 +1,16 @@
 ---
 footer:
   - name: Footer1
-    link: test.md
+    link: footer
 header:
-  - name: Guide
-    link: test
-    links:
-      - name: test
-        link: testlink
-  - name: LInk2
-    link: test2
+  - name: Home
+    link: /
+  - name: test2
+    link: test2.md
+  - name: test3
+    link: http://test.de    
 ---
-# Title
+# Home
 
 - [test](test.md)
 - [test2](test2.md)
