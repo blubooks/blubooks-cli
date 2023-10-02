@@ -41,7 +41,7 @@ type PageContent struct {
 }
 
 func Build(dev bool) error {
-	navi, err := genNavi()
+	navi, err := genNavi("SUMMARY.md")
 	if err != nil {
 		return err
 	}

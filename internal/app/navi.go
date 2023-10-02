@@ -7,9 +7,12 @@ import (
 	"strings"
 
 	"github.com/blubooks/blubooks-cli/pkg/tools"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/segmentio/ksuid"
 	"github.com/yuin/goldmark"
+	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
 )
 
@@ -32,21 +35,34 @@ type Page struct {
 	Pages      []Page  `json:"pages,omitempty"`
 }
 
+type MetaLinks struct {
+	Name  string      `json:"name"`
+	Link  string      `json:"link,omitempty"`
+	Links []MetaLinks `json:"links,omitempty"`
+}
+
 type Navi struct {
-	Title string `json:"title,omitempty"`
-	Id    string `json:"id"`
-	Pages []Page `json:"pages,omitempty"`
+	Title  string      `json:"title,omitempty"`
+	Id     string      `json:"id"`
+	Pages  []Page      `json:"pages,omitempty"`
+	Header []MetaLinks `json:"header,omitempty"`
+	Footer []MetaLinks `json:"footer,omitempty"`
 }
 
 func createLink(link *string) *string {
 	if link != nil {
 
-		if filepath.Base(*link) == "README.md" {
-			l := "/" + filepath.Dir(*link)
+		if *link == "README.md" {
+			l := "/"
+			return &l
+		} else if filepath.Base(*link) == "README.md" {
+			l := filepath.Dir(*link)
+			l = tools.SetFirstLash(l)
 			return &l
 		}
 		l := strings.TrimSuffix(*link, filepath.Ext(*link))
-		l = "/" + tools.SetLastLash(l)
+		l = tools.SetLastLash(l)
+		l = tools.SetFirstLash(l)
 
 		return &l
 
@@ -119,26 +135,61 @@ func listitemlink(page *Page, node ast.Node, source *[]byte) {
 		page.Title = &titleStr
 	}
 
-	return
-
 }
 
-func genNavi() (*Navi, error) {
+func genNavi(filename string) (*Navi, error) {
 
-	source, err := os.ReadFile("data/content/SUMMARY.md")
+	isRoot := false
+
+	if filename == "SUMMARY.md" {
+		isRoot = true
+	}
+
+	source, err := os.ReadFile("data/content/" + filename)
 	if err != nil {
 		return nil, err
 	}
 
+	markdown := goldmark.New(
+		goldmark.WithExtensions(
+			meta.Meta,
+		),
+	)
+
 	var buf bytes.Buffer
-	if err := goldmark.Convert(source, &buf); err != nil {
+	context := parser.NewContext()
+
+	if err := markdown.Convert(source, &buf, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
 
-	doc := goldmark.DefaultParser().Parse(text.NewReader([]byte(source)))
+	doc := markdown.Parser().Parse(text.NewReader([]byte(source)))
+	//doc := goldmark.DefaultParser().Parse(text.NewReader([]byte(source)))
 	listLevel := 0
 
 	var navi Navi
+
+	if isRoot {
+		var json = jsoniter.ConfigCompatibleWithStandardLibrary
+		metaData := meta.Get(context)
+
+		header := metaData["header"]
+		jsonString, err := json.Marshal(header)
+		if err == nil {
+			var ml []MetaLinks
+			json.Unmarshal(jsonString, &ml)
+			navi.Header = ml
+
+		}
+		footer := metaData["footer"]
+		jsonString, err = json.Marshal(footer)
+		if err == nil {
+			var ml []MetaLinks
+			json.Unmarshal(jsonString, &ml)
+			navi.Footer = ml
+
+		}
+	}
 
 	var entry Page
 	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
@@ -151,6 +202,7 @@ func genNavi() (*Navi, error) {
 
 				h := n.(*ast.Heading)
 				if h.Level == 1 && navi.Title == "" {
+
 					navi.Title = string(n.Text([]byte(source)))
 					navi.Id = ksuid.New().String()
 				} else if h.Level == 2 {
@@ -163,6 +215,7 @@ func genNavi() (*Navi, error) {
 
 					entry = Page{
 						Set:   true,
+						Id:    ksuid.New().String(),
 						Level: listLevel,
 						Type:  TypeGroup,
 						Title: &titleStr,
@@ -170,10 +223,14 @@ func genNavi() (*Navi, error) {
 				}
 
 			} else if n.Kind() == ast.KindThematicBreak {
+
 				if entry.Set {
+
 					navi.Pages = append(navi.Pages, entry)
+					//navi.Pages = append(entry.Pages, entry)
 					entry = Page{}
 				}
+
 			} else if n.Kind() == ast.KindList {
 				listLevel = listLevel + 1
 
@@ -188,22 +245,55 @@ func genNavi() (*Navi, error) {
 					pg.Level = listLevel
 					listitemlink(&pg, n.FirstChild(), &source)
 
+					//					entry.Pages = append(entry.Pages, pg)
+
+					//
+
+					list(n, 1, &pg, &source)
 					if entry.Type == 1 {
-						list(n, 1, &pg, &source)
 						entry.Pages = append(entry.Pages, pg)
 					} else {
 						navi.Pages = append(navi.Pages, pg)
 					}
+
+					/*
+						if entry.Type == 1 {
+							entry.Pages = append(entry.Pages, pg)
+						} else {
+
+								navi.Pages = append(navi.Pages, pg)
+
+							}
+						}
+					*/
+
 				}
 			}
 
 		} else {
 			if n.Kind() == ast.KindList {
 				listLevel = listLevel - 1
+
 			} else if n.Kind() == ast.KindDocument {
 				if entry.Set {
+
 					navi.Pages = append(navi.Pages, entry)
+
 				}
+				/*
+					if entry.Set {
+						if inHeader {
+							navi.Header = append(navi.Header, entry)
+						} else {
+							if isRoot {
+								navi.Footer = append(navi.Footer, entry)
+							} else {
+								navi.Pages = append(navi.Pages, entry)
+							}
+
+						}
+					}
+				*/
 			}
 		}
 
