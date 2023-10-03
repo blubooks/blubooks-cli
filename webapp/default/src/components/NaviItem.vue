@@ -15,10 +15,9 @@ defineProps({
         type: Array<ModelPage>,
         required: true
     },
-    page1: {
+    page: {
         type:   Object as PropType<ModelPage>,
         required: false,
-        default: []
     },
     level: {
         type: Number,
@@ -36,22 +35,22 @@ defineProps({
 </script>
 
 <template>
-    <ul class="bl-nav-ul">
-    <template v-for="page of pages" :key="page.link">
-        <li>
-            <div class="name">
+    <ul class="bl-nav-ul"  :class="{'bl-group': page && !page.link, 'bl-link-list': page && page.link  }">
+    <template v-for="pg of pages" :key="pg.link">
+        <li :class="{'bl-group-item': pg && !pg.link, 'bl-link-list-item': pg && pg.link  }">
+            <div class="bl-inner-item"  :class="{'link': pg.link }">
                 
-                <router-link v-if="page.link" :to="page.link">
-            {{  page.title }} (<span v-if="page.link == route.path">{{ route.path }}</span>)
+                <router-link v-if="pg.link" :to="pg.link">
+            {{  pg.title }} (<span v-if="pg.link == route.path">{{ route.path }}</span>)
             </router-link>
-            <span v-else>{{ page.title }}</span>
+            <span class="title" v-else>{{ pg.title }}</span>
             </div>
 
 
                 <NaviItem
-                    v-if="page.pages"
-                    :pages="page.pages"
-                    :page1="page"
+                    v-if="pg.pages && pg.show "
+                    :pages="pg.pages"
+                    :page="pg"
                     :level="level + 1"
                     :base="base"
                  

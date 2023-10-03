@@ -1,6 +1,12 @@
 
 .bl-header {
     height: 80px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0px;
+    background-color: #fff;
+    z-index: 1;
+    border-bottom: 1px solid #ccc;
 }
 
 .bl-container{
@@ -23,7 +29,7 @@
     justify-content: flex-end;
     height: calc(100vh - 80px);
 
-    .bl-navi-inner {
+    .bl-nav-inner {
         width: 300px;
     }
 }
@@ -68,7 +74,23 @@
     }    
 }
 
-
-#bl-nav ul ul {
+#bl-nav ul.bl-link-list  {
     margin-left: 20px;
+}
+#bl-nav li.bl-group-item  {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+#bl-nav ul.bl-link-list  ul.bl-link-list {
+    margin-left: 20px;
+}
+
+#bl-nav li a, #bl-nav li span.title{
+    flex-grow: 1;
+    display: flex;
+    padding: 4px 0;
+    line-height: 24px;
+    font-size: 14px;
+    transition: color .25s;
 }

@@ -1,7 +1,5 @@
 <template>
-  <div class="bl-frame"> 
       <router-view />
-  </div>
   <!-- <confirm-popup ref="confirm" /> -->
 </template>
 

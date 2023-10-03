@@ -16,6 +16,8 @@ export type ModelContent = {
 
   
 export type ModelPage = {
+    show: boolean
+
     id: string
     level?: number
     type: number

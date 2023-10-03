@@ -31,6 +31,7 @@ type Page struct {
 	Set        bool    `json:"-"`
 	Parent     *Page   `json:"-"`
 	ParentLink *string `json:"parent,omitempty"`
+	ParentId   *string `json:"parentId,omitempty"`
 	Level      int     `json:"level,omitempty"`
 	Type       int     `json:"type,omitempty"`
 	Title      *string `json:"title,omitempty"`
@@ -102,6 +103,7 @@ func list(node ast.Node, initLevel int, page *Page, source *[]byte) {
 					pg.Type = TypeLink
 					pg.Level = level
 					pg.Parent = page
+					pg.ParentId = &page.Id
 					pg.ParentLink = createLink(page.Link)
 					pg.Id = ksuid.New().String()
 
@@ -255,12 +257,14 @@ func genNavi(filename string) (*Navi, error) {
 				} else if h.Level == 2 {
 
 					if entry.Set {
+
 						navi.Pages = append(navi.Pages, entry)
 					}
 
 					titleStr := string(n.Text([]byte(source)))
 
 					entry = Page{
+						Id:    ksuid.New().String(),
 						Set:   true,
 						Level: listLevel,
 						Type:  TypeGroup,
@@ -289,6 +293,8 @@ func genNavi(filename string) (*Navi, error) {
 
 					pg.Type = TypeMenuItem
 					pg.Level = listLevel
+					pg.Parent = &entry
+					pg.ParentId = &entry.Id
 					listitemlink(&pg, n.FirstChild(), &source)
 					list(n, 1, &pg, &source)
 					if entry.Type == 1 {
