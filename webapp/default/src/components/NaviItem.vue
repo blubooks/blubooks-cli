@@ -6,6 +6,11 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute();
 
+const emit = defineEmits(['navi'])
+
+function navi(page: ModelPage) {
+  emit('navi', page)
+}
 //const appStore = useAppStore()
 
 
@@ -40,10 +45,10 @@ defineProps({
         <li :class="{'bl-group-item': pg && !pg.link, 'bl-link-list-item': pg && pg.link  }">
             <div class="bl-inner-item"  :class="{'link': pg.link }">
                 
-                <router-link v-if="pg.link" :to="pg.link">
+                <a v-if="pg.link" href="#"  :to="pg.link" @click.prevent="$emit('navi', pg)">
             {{  pg.title }} (<span v-if="pg.link == route.path">{{ route.path }}</span>)
-            </router-link>
-            <span class="title" v-else>{{ pg.title }}</span>
+                </a>
+            <span class="title" v-else  @click="$emit('navi', pg)">{{ pg.title }}</span>
             </div>
 
 
@@ -53,6 +58,7 @@ defineProps({
                     :page="pg"
                     :level="level + 1"
                     :base="base"
+                    @navi="navi"
                  
                 />
         </li>
