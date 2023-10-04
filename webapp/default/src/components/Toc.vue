@@ -3,6 +3,11 @@ import {  ModelToc } from '../models/navi'
 
 
 const emit = defineEmits(['scrolling'])
+import { useRoute } from 'vue-router'
+
+const route = useRoute();
+
+
 
 function scrolling(id: string) {
   emit('scrolling', id)
@@ -20,10 +25,10 @@ defineProps({
 </script>
 
 <template>
-    <ul class="bl-nav-ul">
+    <ul class="bl-toc-ul">
     <template v-for="item of items" :key="item.id + '_' + index">
         <li>
-           <a @click.prevent="$emit('scrolling', item.id)">{{ item.title }}</a>
+           <a :href="route.path  +'#' + item.id" @click.prevent="$emit('scrolling', item.id)">{{ item.title }}</a>
             <Toc
                 @scrolling="scrolling"
                 v-if="item.items"
