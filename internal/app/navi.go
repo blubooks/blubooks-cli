@@ -36,6 +36,7 @@ type Page struct {
 	Link       *string `json:"link,omitempty"`
 	ExternLink bool    `json:"extern,omitempty"`
 	DataLink   *string `json:"data"`
+	Navi       *string `json:"navi"`
 	Pages      []Page  `json:"pages,omitempty"`
 }
 
@@ -55,24 +56,38 @@ type MetaLinks struct {
 type Navi struct {
 	Title  string `json:"title,omitempty"`
 	Id     string `json:"id"`
+	Path   *string
 	Pages  []Page `json:"pages,omitempty"`
 	Header []Page `json:"header,omitempty"`
 	Footer []Page `json:"footer,omitempty"`
 }
 
-func createLink(link *string) *string {
+func createLink(link *string, nav *string) *string {
 	if link != nil {
 
-		if *link == "README.md" {
+		if filepath.Base(*link) == "SUMMARY.md" {
+			l := filepath.Dir(*link)
+			l = strings.Replace(l, "/", "-", 0)
+			if nav != nil {
+				l = *nav + l
+			}
+			l = tools.SetFirstLash(l)
+		} else if *link == "README.md" {
 			l := "/"
 			return &l
 		} else if filepath.Base(*link) == "README.md" {
 			l := filepath.Dir(*link)
+			if nav != nil {
+				l = *nav + l
+			}
 			l = tools.SetFirstLash(l)
 			return &l
 		}
 		l := strings.TrimSuffix(*link, filepath.Ext(*link))
 		l = tools.SetLastLash(l)
+		if nav != nil {
+			l = *nav + l
+		}
 		l = tools.SetFirstLash(l)
 
 		return &l
@@ -106,7 +121,7 @@ func list(node ast.Node, initLevel int, page *Page, source *[]byte) {
 					pg.Level = level
 					pg.Parent = page
 					pg.ParentId = &page.Id
-					pg.ParentLink = createLink(page.Link)
+					pg.ParentLink = createLink(page.Link, nil)
 					pg.Id = ksuid.New().String()
 
 					listitemlink(&pg, n.FirstChild(), source)
@@ -139,7 +154,7 @@ func listitemlink(page *Page, node ast.Node, source *[]byte) {
 				linkStr := string(l.Destination)
 				page.Title = &titleStr
 				page.DataLink = &linkStr
-				page.Link = createLink(&linkStr)
+				page.Link = createLink(&linkStr, nil)
 				page.Id = getUrlId(*page.Link)
 
 			}
@@ -185,8 +200,20 @@ func genNavi(filename string) (*Navi, error) {
 
 	isRoot := false
 
-	if filename == "SUMMARY.md" {
+	dir := filepath.Dir(filename)
+	base := filepath.Base(filename)
+
+	if base != "SUMMARY.md" {
+		return nil, errors.New("No SUMMARY.md")
+	}
+
+	var navi Navi
+
+	if dir == "." {
 		isRoot = true
+	} else {
+		s := strings.Replace(dir, "/", "-", 0)
+		navi.Path = &s
 	}
 
 	if !strings.HasSuffix(filename, "SUMMARY.md") {
@@ -211,34 +238,7 @@ func genNavi(filename string) (*Navi, error) {
 		panic(err)
 	}
 
-	var navi Navi
 	navi.Id = getUrlId("README.md")
-
-	if isRoot {
-		/*
-			var json = jsoniter.ConfigCompatibleWithStandardLibrary
-			metaData := meta.Get(context)
-
-			header := metaData["header"]
-			jsonString, err := json.Marshal(header)
-			if err == nil {
-				var ml []MetaLinks
-				json.Unmarshal(jsonString, &ml)
-				metalinks(ml)
-				navi.Header = ml
-
-			}
-			footer := metaData["footer"]
-			jsonString, err = json.Marshal(footer)
-			if err == nil {
-				var ml []MetaLinks
-				metalinks(ml)
-				json.Unmarshal(jsonString, &ml)
-				navi.Footer = ml
-
-			}
-		*/
-	}
 
 	doc := markdown.Parser().Parse(text.NewReader([]byte(source)))
 	//doc := goldmark.DefaultParser().Parse(text.NewReader([]byte(source)))
@@ -264,11 +264,11 @@ func genNavi(filename string) (*Navi, error) {
 						naviIsSet = true
 						loopType = 2
 					}
-					if t == "HEADER" && !headerIsSet {
+					if isRoot && t == "HEADER" && !headerIsSet {
 						headerIsSet = true
 						loopType = 1
 					}
-					if t == "FOOTER" && !footerIsSet {
+					if isRoot && t == "FOOTER" && !footerIsSet {
 						footerIsSet = true
 						loopType = 3
 					}
