@@ -45,8 +45,8 @@ defineProps({
         <li :class="{'bl-group-item': pg && !pg.link, 'bl-link-list-item': pg && pg.link  }">
             <div class="bl-inner-item"  :class="{'link': pg.link }">
                 
-                <a v-if="pg.link" href="#"  :to="pg.link" @click.prevent="$emit('navi', pg)">
-            {{  pg.title }} (<span v-if="pg.link == route.path">{{ route.path }}</span>)
+                <a v-if="pg.link" href="#" :class="{'active-item': pg.link == route.path }"  :to="pg.link" @click.prevent="$emit('navi', pg)">
+            {{  pg.title }}
                 </a>
             <span class="title" v-else  @click="$emit('navi', pg)">{{ pg.title }}</span>
             </div>

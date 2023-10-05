@@ -1,17 +1,10 @@
----
-footer:
-  - name: Footer1
-    link: footer
-header:
-  - name: Home
-    link: /
-  - name: test2
-    link: test2.md
-  - name: test3
-    link: http://test.de    
----
+# HEADER
+- [guide](guide/test.md)
 
-# Home
+# FOOTER
+- [Link1](https://test.de)
+
+# NAV
 
 - [test](test.md)
 - [test2](test2.md)
@@ -20,6 +13,7 @@ header:
      - [Test2 - Test2](test2/test5.md)
   - [Test2 - Test3](test2/test25.md)
 - [test](test.md)
+- [tes3](test3.md)
 
 ## TExt hg2
 
@@ -33,5 +27,3 @@ header:
 * [page 4](page-4)
 * [page 5](page-5)
 
-# HEADER
-# FOOTER
