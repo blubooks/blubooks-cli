@@ -11,8 +11,8 @@ const routes = [
     component: () => import("../views/Home.vue"),
   },
   {
-    name: "menu",
-    path: "/m/:menu/:pathMatch(.*)",
+    name: "navi",
+    path: "/n/:navi/:pathMatch(.*)",
     component: () => import("../views/Home.vue"),
   }, 
   {

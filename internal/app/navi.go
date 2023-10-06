@@ -2,7 +2,7 @@ package app
 
 import (
 	"bytes"
-	"errors"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -54,12 +54,14 @@ type MetaLinks struct {
 */
 
 type Navi struct {
-	Title  string `json:"title,omitempty"`
-	Id     string `json:"id"`
-	Path   *string
-	Pages  []Page `json:"pages,omitempty"`
-	Header []Page `json:"header,omitempty"`
-	Footer []Page `json:"footer,omitempty"`
+	Title    string `json:"title,omitempty"`
+	Id       string `json:"id"`
+	Path     *string
+	Pages    []Page `json:"pages,omitempty"`
+	Header   []Page `json:"header,omitempty"`
+	Footer   []Page `json:"footer,omitempty"`
+	Navis    []Navi
+	FileName string
 }
 
 func createLink(link *string, nav *string) *string {
@@ -68,10 +70,12 @@ func createLink(link *string, nav *string) *string {
 		if filepath.Base(*link) == "SUMMARY.md" {
 			l := filepath.Dir(*link)
 			l = strings.Replace(l, "/", "-", 0)
+			l = "n/" + l
 			if nav != nil {
 				l = *nav + l
 			}
 			l = tools.SetFirstLash(l)
+			return &l
 		} else if *link == "README.md" {
 			l := "/"
 			return &l
@@ -104,7 +108,7 @@ func getUrlId(url string) string {
 	return naviUrlIds[url]
 }
 
-func list(node ast.Node, initLevel int, page *Page, source *[]byte) {
+func list(node ast.Node, initLevel int, page *Page, source *[]byte, navi *Navi) {
 	level := initLevel
 	ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		s := ast.WalkStatus(ast.WalkContinue)
@@ -122,11 +126,29 @@ func list(node ast.Node, initLevel int, page *Page, source *[]byte) {
 					pg.Parent = page
 					pg.ParentId = &page.Id
 					pg.ParentLink = createLink(page.Link, nil)
+
+					if filepath.Base(*page.Link) == "SUMMARY.md" {
+						l := filepath.Dir(*page.Link)
+						l = strings.Replace(l, "/", "-", 0)
+						n := &Navi{
+							Path:     &l,
+							FileName: *page.Link,
+						}
+						log.Println("test", n.FileName)
+						err := genNavi(n)
+						if err != nil {
+							log.Println("Fehler2", err)
+						} else {
+							navi.Navis = append(navi.Navis, *n)
+						}
+
+					}
+
 					pg.Id = ksuid.New().String()
 
 					listitemlink(&pg, n.FirstChild(), source)
 
-					list(n, level, &pg, source)
+					list(n, level, &pg, source, navi)
 
 					page.Pages = append(page.Pages, pg)
 
@@ -195,34 +217,47 @@ func metalinks(links []MetaLinks) {
 	}
 }
 */
-func genNavi(filename string) (*Navi, error) {
-	naviUrlIds = make(map[string]string)
+func genNavi(navi *Navi) error {
+
+	/*
+
+
+		if (navi == nil) {
+			dir := filepath.Dir(filename)
+			base := filepath.Base(filename)
+
+			if base != "SUMMARY.md" {
+				return nil, errors.New("No SUMMARY.md")
+			}
+
+			var navi Navi
+
+		}
+		if dir == "." {
+			isRoot = true
+		} else {
+			s := strings.Replace(dir, "/", "-", 0)
+			navi.Path = &s
+		}
+
+		if !strings.HasSuffix(filename, "SUMMARY.md") {
+			return nil, errors.New("no SUMMERY.md found")
+		}
+
+	*/
+	//var navi Navi
 
 	isRoot := false
-
-	dir := filepath.Dir(filename)
-	base := filepath.Base(filename)
-
-	if base != "SUMMARY.md" {
-		return nil, errors.New("No SUMMARY.md")
-	}
-
-	var navi Navi
-
-	if dir == "." {
+	if navi == nil {
+		n := Navi{}
+		navi = &n
 		isRoot = true
-	} else {
-		s := strings.Replace(dir, "/", "-", 0)
-		navi.Path = &s
+		navi.FileName = "SUMMARY.md"
 	}
 
-	if !strings.HasSuffix(filename, "SUMMARY.md") {
-		return nil, errors.New("no SUMMERY.md found")
-	}
-
-	source, err := os.ReadFile("data/content/" + filename)
+	source, err := os.ReadFile("data/content/" + navi.FileName)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	markdown := goldmark.New(
@@ -329,7 +364,7 @@ func genNavi(filename string) (*Navi, error) {
 					pg.Parent = &entry
 					pg.ParentId = &entry.Id
 					listitemlink(&pg, n.FirstChild(), &source)
-					list(n, 1, &pg, &source)
+					list(n, 1, &pg, &source, navi)
 					if entry.Type == 1 {
 						entry.Pages = append(entry.Pages, pg)
 					} else {
@@ -372,5 +407,6 @@ func genNavi(filename string) (*Navi, error) {
 		return s, err
 	})
 
-	return &navi, nil
+	return nil
+	//return &navi, nil
 }

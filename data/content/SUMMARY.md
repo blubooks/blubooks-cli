@@ -1,5 +1,5 @@
 # HEADER
-- [guide](guide/SUMMERY.md)
+- [guide](guide/SUMMARY.md)
 
 # FOOTER
 - [Link1](https://test.de)
@@ -24,6 +24,6 @@
 
 ***
 
-* [page 4](page-4)
-* [page 5](page-5)
+* [page 4](page-4.md)
+* [page 5](page-5.md)
 
