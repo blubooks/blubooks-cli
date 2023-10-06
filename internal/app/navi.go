@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/blubooks/blubooks-cli/pkg/tools"
@@ -23,6 +25,7 @@ const (
 )
 
 var naviUrlIds map[string]string
+var summaryUrls map[string]string
 
 type Page struct {
 	Id         string  `json:"id,omitempty"`
@@ -36,7 +39,6 @@ type Page struct {
 	Link       *string `json:"link,omitempty"`
 	ExternLink bool    `json:"extern,omitempty"`
 	DataLink   *string `json:"data"`
-	Navi       *string `json:"navi"`
 	Pages      []Page  `json:"pages,omitempty"`
 }
 
@@ -56,7 +58,7 @@ type MetaLinks struct {
 type Navi struct {
 	Title    string `json:"title,omitempty"`
 	Id       string `json:"id"`
-	Path     *string
+	Navi     *string
 	Pages    []Page `json:"pages,omitempty"`
 	Header   []Page `json:"header,omitempty"`
 	Footer   []Page `json:"footer,omitempty"`
@@ -69,8 +71,6 @@ func createLink(link *string, nav *string) *string {
 
 		if filepath.Base(*link) == "SUMMARY.md" {
 			l := filepath.Dir(*link)
-			l = strings.Replace(l, "/", "-", 0)
-			l = "n/" + l
 			if nav != nil {
 				l = *nav + l
 			}
@@ -130,21 +130,6 @@ func list(node ast.Node, initLevel int, page *Page, source *[]byte, navi *Navi) 
 					pg.ParentId = &page.Id
 					pg.ParentLink = createLink(page.Link, nil)
 
-					if filepath.Base(*page.DataLink) == "SUMMARY.md" {
-						l := filepath.Dir(*page.DataLink)
-						l = strings.Replace(l, "/", "-", 0)
-						n := &Navi{
-							Path:     &l,
-							FileName: *page.DataLink,
-						}
-						err := genNavi(n, false)
-						if err != nil {
-							log.Println("Fehler - genNavi", err)
-						} else {
-							navi.Navis = append(navi.Navis, *n)
-						}
-					}
-
 					listitemlink(&pg, n.FirstChild(), source, navi)
 					list(n, level, &pg, source, navi)
 
@@ -176,24 +161,46 @@ func listitemlink(page *Page, node ast.Node, source *[]byte, navi *Navi) {
 				linkStr := string(l.Destination)
 				page.Title = &titleStr
 				page.DataLink = &linkStr
-				page.Link = createLink(&linkStr, nil)
 
-				if filepath.Base(*page.DataLink) == "SUMMARY.md" {
-					l := filepath.Dir(*page.DataLink)
-					l = strings.Replace(l, "/", "-", 0)
-					n := &Navi{
-						Path:     &l,
-						FileName: *page.DataLink,
-					}
-					err := genNavi(n, false)
-					if err != nil {
-						log.Println("Fehler - genNavi", err)
+				if page.DataLink != nil {
+
+					matched, _ := regexp.MatchString(`^(?:[a-z+]+:)?//`, *page.DataLink)
+					if matched {
+						page.ExternLink = true
+						page.Link = page.DataLink
+						page.DataLink = nil
 					} else {
-						navi.Navis = append(navi.Navis, *n)
+						if strings.HasSuffix(*page.DataLink, ".md") {
+							if filepath.Base(*page.DataLink) == "SUMMARY.md" {
+
+								link, ok := summaryUrls[*page.DataLink]
+								if !ok {
+									link = "/n/" + strconv.Itoa(len(navi.Navis)+1) + "/"
+									summaryUrls[*page.DataLink] = link
+								}
+								l := link + filepath.Dir(*page.DataLink)
+								page.Link = &l
+								n := &Navi{
+									Navi:     &link,
+									FileName: *page.DataLink,
+								}
+								err := genNavi(n, false)
+								if err != nil {
+									log.Println("Fehler - genNavi", err)
+								} else {
+									navi.Navis = append(navi.Navis, *n)
+								}
+								nl := filepath.Dir(*page.DataLink) + "/README.md"
+								page.DataLink = &nl
+							} else {
+								page.Link = createLink(&linkStr, navi.Navi)
+							}
+							page.Id = getUrlId(*page.Link)
+
+						}
+
 					}
 				}
-
-				page.Id = getUrlId(*page.Link)
 
 			}
 		}
