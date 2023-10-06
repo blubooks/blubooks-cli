@@ -119,35 +119,33 @@ func list(node ast.Node, initLevel int, page *Page, source *[]byte, navi *Navi) 
 
 			}
 			if n.Kind() == ast.KindListItem {
+
 				if level == initLevel+1 {
+
 					pg := Page{}
+					pg.Id = ksuid.New().String()
 					pg.Type = TypeLink
 					pg.Level = level
 					pg.Parent = page
 					pg.ParentId = &page.Id
 					pg.ParentLink = createLink(page.Link, nil)
 
-					if filepath.Base(*page.Link) == "SUMMARY.md" {
-						l := filepath.Dir(*page.Link)
+					if filepath.Base(*page.DataLink) == "SUMMARY.md" {
+						l := filepath.Dir(*page.DataLink)
 						l = strings.Replace(l, "/", "-", 0)
 						n := &Navi{
 							Path:     &l,
-							FileName: *page.Link,
+							FileName: *page.DataLink,
 						}
-						log.Println("test", n.FileName)
-						err := genNavi(n)
+						err := genNavi(n, false)
 						if err != nil {
-							log.Println("Fehler2", err)
+							log.Println("Fehler - genNavi", err)
 						} else {
 							navi.Navis = append(navi.Navis, *n)
 						}
-
 					}
 
-					pg.Id = ksuid.New().String()
-
-					listitemlink(&pg, n.FirstChild(), source)
-
+					listitemlink(&pg, n.FirstChild(), source, navi)
 					list(n, level, &pg, source, navi)
 
 					page.Pages = append(page.Pages, pg)
@@ -164,19 +162,37 @@ func list(node ast.Node, initLevel int, page *Page, source *[]byte, navi *Navi) 
 	})
 }
 
-func listitemlink(page *Page, node ast.Node, source *[]byte) {
+func listitemlink(page *Page, node ast.Node, source *[]byte, navi *Navi) {
 
 	ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		s := ast.WalkStatus(ast.WalkContinue)
 
 		if entering {
 			if n.Kind() == ast.KindLink {
+
 				l := n.(*ast.Link)
+
 				titleStr := string(n.Text([]byte(*source)))
 				linkStr := string(l.Destination)
 				page.Title = &titleStr
 				page.DataLink = &linkStr
 				page.Link = createLink(&linkStr, nil)
+
+				if filepath.Base(*page.DataLink) == "SUMMARY.md" {
+					l := filepath.Dir(*page.DataLink)
+					l = strings.Replace(l, "/", "-", 0)
+					n := &Navi{
+						Path:     &l,
+						FileName: *page.DataLink,
+					}
+					err := genNavi(n, false)
+					if err != nil {
+						log.Println("Fehler - genNavi", err)
+					} else {
+						navi.Navis = append(navi.Navis, *n)
+					}
+				}
+
 				page.Id = getUrlId(*page.Link)
 
 			}
@@ -217,8 +233,8 @@ func metalinks(links []MetaLinks) {
 	}
 }
 */
-func genNavi(navi *Navi) error {
-
+func genNavi(navi *Navi, isRoot bool) error {
+	log.Println("testbools", isRoot)
 	/*
 
 
@@ -247,11 +263,7 @@ func genNavi(navi *Navi) error {
 	*/
 	//var navi Navi
 
-	isRoot := false
-	if navi == nil {
-		n := Navi{}
-		navi = &n
-		isRoot = true
+	if isRoot {
 		navi.FileName = "SUMMARY.md"
 	}
 
@@ -363,7 +375,8 @@ func genNavi(navi *Navi) error {
 					pg.Level = listLevel
 					pg.Parent = &entry
 					pg.ParentId = &entry.Id
-					listitemlink(&pg, n.FirstChild(), &source)
+					listitemlink(&pg, n.FirstChild(), &source, navi)
+
 					list(n, 1, &pg, &source, navi)
 					if entry.Type == 1 {
 						entry.Pages = append(entry.Pages, pg)
@@ -373,7 +386,6 @@ func genNavi(navi *Navi) error {
 						}
 						if loopType == 2 {
 							navi.Pages = append(navi.Pages, pg)
-
 						}
 						if loopType == 3 {
 							navi.Footer = append(navi.Footer, pg)
