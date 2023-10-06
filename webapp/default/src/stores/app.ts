@@ -143,7 +143,18 @@ export const useAppStore = defineStore('app', {
           
           let navi = <ModelNavi>response.data;
           this.pagesIdx.set("/", navi.id)
+          if (navi.header) {
+            this.prepareNavi(navi.header, 0, 1)
+          }
+          if (navi.footer) {
+            this.prepareNavi(navi.footer, 0, 1)
+          }
           this.prepareNavi(navi.pages, 0, 1)
+          navi.subnavis.forEach(n => {
+            if(n.pages) {
+              this.prepareNavi(n.pages, 0, 1)
+            }
+          });
           this.navi = navi
        
         },

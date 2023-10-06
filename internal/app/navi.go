@@ -62,7 +62,7 @@ type Navi struct {
 	Pages    []Page `json:"pages,omitempty"`
 	Header   []Page `json:"header,omitempty"`
 	Footer   []Page `json:"footer,omitempty"`
-	Navis    []Navi
+	Navis    []Navi `json:"subnavis,omitempty"`
 	FileName string
 }
 

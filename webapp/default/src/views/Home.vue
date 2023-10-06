@@ -1,7 +1,7 @@
 <template>
     <header class="bl-header">
         <div class="bl-container"> 
-            Head
+            <HeaderNav></HeaderNav>
         </div>
 
     </header>   
@@ -36,6 +36,7 @@
 import {onMounted } from 'vue'
 import { useAppStore } from "../stores/app";
 import Navi from '../components/Navi.vue'
+import HeaderNav from '../components/HeaderNav.vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import Toc from '../components/Toc.vue';
 
@@ -60,6 +61,7 @@ onBeforeRouteLeave((to, from) => {
 
 onBeforeRouteUpdate( (to, from) => {
     if (to.path !== from.path) {
+        console.log(to.params)
         loadData(to.path)
         }
     })

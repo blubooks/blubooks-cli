@@ -86,6 +86,25 @@ func Build(dev bool) error {
 	writeJson("README.md", navi.Id)
 	page(navi.Pages)
 
+	for _, n := range navi.Header {
+		if len(n.Pages) > 0 {
+			page(n.Pages)
+		}
+	}
+	for _, n := range navi.Footer {
+		if len(n.Pages) > 0 {
+			page(n.Pages)
+		}
+	}
+
+	for _, n := range navi.Navis {
+		writeJson(strings.Replace(n.FileName, "SUMMARY.md", "README.md", 1), n.Id)
+		if len(n.Pages) > 0 {
+			page(n.Pages)
+
+		}
+	}
+
 	return nil
 
 }

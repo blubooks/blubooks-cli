@@ -4,6 +4,9 @@
 export type ModelNavi = {
     title?: string
     pages: Array<ModelPage>
+    header: Array<ModelPage>
+    footer: Array<ModelPage>
+    subnavis: Array<ModelNavi>
     id: string
 };
 
@@ -25,6 +28,7 @@ export type ModelPage = {
     link?: string
     parent?: string
     pages: Array<ModelPage>
+
 
 };
 export type ModelToc = {

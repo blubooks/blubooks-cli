@@ -11,7 +11,7 @@ const routes = [
     component: () => import("../views/Home.vue"),
   },
   {
-    name: "navi",
+    name: "home",
     path: "/n/:navi/:pathMatch(.*)",
     component: () => import("../views/Home.vue"),
   }, 
