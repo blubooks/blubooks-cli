@@ -1,4 +1,10 @@
-# Home
+# HEADER
+- [guide](guide/SUMMARY.md)
+
+# FOOTER
+- [Link1](https://test.de)
+
+# NAV
 
 - [test](test.md)
 - [test2](test2.md)
@@ -21,14 +27,3 @@
 * [page 4](page-4.md)
 * [page 5](page-5.md)
 
-
-# Test
-
-- [test](test.md)
-- [test2](test2.md)
-  - [Test2 - Test2](test2/test2.md)
-    - [Test2 - Test2](test2/test3.md)
-     - [Test2 - Test2](test2/test5.md)
-  - [Test2 - Test3](test2/test25.md)
-- [test](test.md)
-- [tes3](test3.md)

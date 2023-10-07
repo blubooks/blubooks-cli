@@ -44,7 +44,7 @@ func Build(dev bool) error {
 	naviUrlIds = make(map[string]string)
 	summaryUrls = make(map[string]string)
 	var navi Navi
-	err := genNavi(&navi, true)
+	err := genNavi(&navi)
 	if err != nil {
 		return err
 	}
@@ -86,25 +86,27 @@ func Build(dev bool) error {
 	writeJson("README.md", navi.Id)
 	page(navi.Pages)
 
-	for _, n := range navi.Header {
-		if len(n.Pages) > 0 {
-			page(n.Pages)
+	/*
+		for _, n := range navi.Header {
+			if len(n.Pages) > 0 {
+				page(n.Pages)
+			}
 		}
-	}
-	for _, n := range navi.Footer {
-		if len(n.Pages) > 0 {
-			page(n.Pages)
+		for _, n := range navi.Footer {
+			if len(n.Pages) > 0 {
+				page(n.Pages)
+			}
 		}
-	}
 
-	for _, n := range navi.Navis {
-		writeJson(strings.Replace(n.FileName, "SUMMARY.md", "README.md", 1), n.Id)
-		if len(n.Pages) > 0 {
-			page(n.Pages)
 
+		for _, n := range navi.Navis {
+			writeJson(strings.Replace(n.Summary, "SUMMARY.md", "README.md", 1), n.Id)
+			if len(n.Pages) > 0 {
+				page(n.Pages)
+
+			}
 		}
-	}
-
+	*/
 	return nil
 
 }
