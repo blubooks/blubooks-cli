@@ -41,10 +41,10 @@ type PageContent struct {
 }
 
 func Build(dev bool) error {
-	naviUrlIds = make(map[string]string)
-	summaryUrls = make(map[string]string)
-	var navi Navi
-	err := genNavi(&navi)
+	//naviUrlIds = make(map[string]string)
+	//summaryUrls = make(map[string]string)
+	//var navi Navi
+	navi, err := genNavi()
 	if err != nil {
 		return err
 	}
@@ -83,8 +83,12 @@ func Build(dev bool) error {
 	if err != nil {
 		return err
 	}
-	writeJson("README.md", navi.Id)
-	page(navi.Pages)
+	//writeJson("README.md", navi.Id)
+	genPages(navi.Pages)
+
+	if navi.Root != nil {
+		genPage(navi.Root)
+	}
 
 	/*
 		for _, n := range navi.Header {
@@ -132,17 +136,22 @@ func writeJson(filename string, id string) {
 	}
 }
 
-func page(pages []Page) {
+func genPage(s *Page) {
+
+	if s.Link != nil && s.DataLink != nil {
+		writeJson(*s.DataLink, s.Id)
+
+	}
+	if len(s.Pages) > 0 {
+		genPages(s.Pages)
+	}
+}
+
+func genPages(pages []Page) {
 
 	for _, s := range pages {
 
-		if s.Link != nil && s.DataLink != nil {
-			writeJson(*s.DataLink, s.Id)
-
-		}
-		if len(s.Pages) > 0 {
-			page(s.Pages)
-		}
+		genPage(&s)
 	}
 }
 
