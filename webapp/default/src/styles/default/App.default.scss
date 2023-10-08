@@ -1,12 +1,24 @@
+@import 'partials/roots';
 @import 'partials/reset';
 @import 'partials/defaults';
+@import 'partials/common';
 @import 'partials/layout';
 @import 'partials/markdown';
+@import 'partials/fonts';
+
+
+body {
+    line-height: 24px;
+    font-family: 'Helevtica', 'Arial', 'Sans-Serif';
+    font-size: 16px;
+    font-weight: 400;
+}
 
 .img-content {
     max-width: 100%;
     height: auto;
 }
+
 .markdown-body {
     box-sizing: border-box;
     min-width: 200px;

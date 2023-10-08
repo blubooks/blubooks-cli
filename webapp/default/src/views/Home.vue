@@ -1,6 +1,6 @@
 <template>
     <SearchModal v-if="appStore.navi.searchId"  @navi="navi"></SearchModal>
-    <header id="bl-header">
+    <header id="bl-header" class="bl-header">
         <div class="bl-container"> 
             <div class="bl-inner">
                 <HeaderNav  @navi="navi"></HeaderNav>
@@ -9,32 +9,28 @@
         </div>
 
     </header>   
-    <div class="bl-container"> 
-        <div id="bl-view">
-
-            <nav id="bl-nav">
-                <div class="bl-nav-inner">
-                    <Navi @navi="navi"></Navi>
-                </div>
-            </nav>
-            <div id="bl-page">
-                <div class="bl-page-inner">
-                    <div id="bl-content">
-                        <div class="bl-content-inner">
-                            <div id="bl-content-body" class="markdown-body" v-if="appStore.content" v-html="appStore.content.html" />
-                        </div>                        
-                    </div>            
-            
-                    <aside id="bl-sidebar" >
-                        <div v-if="appStore.content.toc">
-                            <Toc :items="appStore.content.toc"  @scrolling="scrolling" />
-                        </div>
-                    </aside>
-                </div>
-
+    <div id="bl-view" class="bl-view bl-container">
+        <nav id="bl-nav" class="bl-nav">
+            <div class="bl-nav-inner">
+                <Navi @navi="navi"></Navi>
             </div>
-        </div>   
-    </div> 
+        </nav>
+        <div id="bl-page" class="bl-page">
+            <div class="bl-page-inner">
+                <div id="bl-content" class="bl-content">
+                    <div class="bl-content-inner">
+                        <div id="bl-content-body" class="markdown-body" v-if="appStore.content" v-html="appStore.content.html" />
+                    </div>                        
+                </div>            
+        
+                <aside id="bl-sidebar" class="bl-sidebar" >
+                    <div class="bl-inner">
+                        <Toc v-if="appStore.content.toc" :items="appStore.content.toc"  @scrolling="scrolling" />
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>   
 </template>
 <script lang="ts" setup>
 import {onMounted } from 'vue'
@@ -143,3 +139,9 @@ onMounted(() => {
 
 
 </script>
+
+<style lang="scss" scoped>
+
+
+
+</style>

@@ -1,5 +1,5 @@
 <template>
-      <router-view />
+  <router-view />
   <!-- <confirm-popup ref="confirm" /> -->
 </template>
 
@@ -8,3 +8,7 @@
 
 
 </script>
+
+<style lang="scss">
+
+</style>

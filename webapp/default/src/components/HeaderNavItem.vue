@@ -32,7 +32,7 @@ defineProps({
 
 <template>
     
-    <ul class="bl-nav" :class="{ 'bl-group': page && !page.link, 'bl-link-list': page && page.link }">
+    <ul :class="{ 'bl-group': page && !page.link, 'bl-link-list': page && page.link }">
         <template v-for="pg of pages" :key="pg.link">
             <li :class="{ 'bl-group-item': pg && !pg.link, 'bl-link-list-item': pg && pg.link }">
                 <div class="bl-inner-item" :class="{ 'link': pg.link }">

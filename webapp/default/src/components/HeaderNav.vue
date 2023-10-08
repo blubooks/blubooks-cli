@@ -13,7 +13,7 @@ function navi(page: ModelPage) {
 </script>
 
 <template>
-    <div id="bl-header-nav">
+    <div id="bl-header-nav" class="bl-header-nav">
         <button @click="appStore.openSearch()">Search</button>
         <HeaderNavItem 
             :pages="appStore.navi.header"

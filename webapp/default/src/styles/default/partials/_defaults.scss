@@ -1,25 +1,41 @@
 
 :root {
+    /*
     --size-xxs: 18px;
     --size-xs: 24px;
     --size-s: 32px;
     --size-m: 48px;
     --size-l: 64px;
     --size-xl: 80px;  
+    */
+    --size-xl: 80px;  
 }
 :root {
-  
+    --page-wrapper-max-width: 1200px;
+    --app-header-height: calc(var(--size-xl) + 1px);
+    --app-nav-width: 220px;
+/*
     --public-content-desktop-header-height: 80px;
     --public-content-mobile-header-height: 64px;
     --public-content-container-max-width: 1900px;
     --block-wrapper-max-width: 750px;
-    --page-wrapper-max-width: 1200px;
     --app-header-height: calc(var(--size-l) + 1px);
+    */
 }
 *:before, *:after {
     box-sizing: border-box;
 }
 
+:root{
+    --bl-c-text-1: rgba(60, 60, 67);
+    --bl-c-text-2: rgba(60, 60, 67, .78);
+    --bl-c-text-3: rgba(60, 60, 67, .56);
+
+    --bl-c-link-1: #3451b2;
+    --bl-c-link-2: #3a5ccc;
+    --bl-c-link-3: #5672cd;
+} 
+/*
 .css {
     align-items: stretch;
     background-color: rgba(0,0,0,0.00);
@@ -38,3 +54,4 @@
     text-decoration: none;
     z-index: 0;
 }
+*/
