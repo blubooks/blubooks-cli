@@ -10,6 +10,14 @@ header:
       pages: 
         - title: Extern2
           link: "https://gitlab.cidb.de"
+          pages:
+            - title: Extern2
+              link: "https://gitlab.cidb.de"
+            - title: Extern2
+              link: "https://gitlab.cidb.de"
+        - title: Extern2
+          link: "https://gitlab.cidb.de"
+
 footer: 
   #hide: false
   pages:

@@ -14,6 +14,7 @@ function navi(page: ModelPage) {
 
 <template>
     <div id="bl-header-nav">
+      
         <HeaderNavItem 
             :pages="appStore.navi.header"
             :level="0"
