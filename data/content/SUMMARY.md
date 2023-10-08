@@ -1,23 +1,33 @@
 ---
-header: 
-  - title: Home
-    link: "README.md"
-  - title: test
-    link: "test.md"
-    pages: 
-      - title: test1
-        link: "test1.md"
-  - title: test2
-    pages: 
-      - title: test1
-        link: "test1.md"        
+header:
+  #hide: false
+  #hideNavi: false
+  #beforeNavi: false
+  pages:
+    - title: Extern
+      link: "https://gitea.cidb.de"          
+    - title: Test
+      pages: 
+        - title: Extern2
+          link: "https://gitlab.cidb.de"
 footer: 
-  - title: Extern
-    link: "https://gitea.cidb.de"
-  - title: test
-    link: "test.md"
+  #hide: false
+  pages:
+    - title: Extern
+      link: "https://gitea.cidb.de"
+    - title: test
+      link: "test.md"
+navi: 
+  #showLevel: 1
+  #accordion: false
 ---
-# Home
+# Doku
+
+Beschreibung 1
+
+Beschreibung 2 ***test*** test
+
+## Home
 
 - [start](README.md)
 - [test](test.md)
@@ -29,7 +39,7 @@ footer:
 - [test](test.md)
 - [tes3](test3.md)
 
-## TExt hg2
+### TExt hg2
 
 * [page 1](page-1/README.md)
   - [page 1.1](page-1/page1.md)
@@ -38,7 +48,14 @@ footer:
 
 ***
 
+
+* [page 7](page-7.md)
+* [page 8](page-8.md)
+
+## TEst2
+
 * [page 4](page-4.md)
 * [page 5](page-5.md)
+
 
 

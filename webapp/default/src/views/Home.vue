@@ -1,7 +1,10 @@
 <template>
-    <header class="bl-header">
+    <header id="bl-header">
         <div class="bl-container"> 
-            <HeaderNav></HeaderNav>
+            <div class="bl-inner">
+                <HeaderNav  @navi="navi"></HeaderNav>
+            </div>
+            <div class="clear"></div>
         </div>
 
     </header>   
@@ -10,14 +13,14 @@
 
             <nav id="bl-nav">
                 <div class="bl-nav-inner">
-                    <Navi></Navi>
+                    <Navi @navi="navi"></Navi>
                 </div>
             </nav>
             <div id="bl-page">
                 <div class="bl-page-inner">
                     <div id="bl-content">
                         <div class="bl-content-inner">
-                            <div class="markdown-body" v-if="appStore.content" v-html="appStore.content.html" />
+                            <div id="bl-content-body" class="markdown-body" v-if="appStore.content" v-html="appStore.content.html" />
                         </div>                        
                     </div>            
             
@@ -36,9 +39,11 @@
 import {onMounted } from 'vue'
 import { useAppStore } from "../stores/app";
 import Navi from '../components/Navi.vue'
+import Toc from '../components/Toc.vue'
 import HeaderNav from '../components/HeaderNav.vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
-import Toc from '../components/Toc.vue';
+import { ModelPage } from '../models/navi';
+import  router  from '../router';
 
 
 const appStore = useAppStore()
@@ -46,8 +51,57 @@ const route = useRoute();
 function scrolling(id: string) {
     const el = document.getElementById(id);
     if (el) {
-        el.scrollIntoView({behavior: "smooth"});
+        var elementPosition = el.offsetTop;
+        window.scrollTo({
+        top: elementPosition - 10, //add your necessary value
+        behavior: "smooth"  //Smooth transition to roll
+        });
 
+        //const y = el.getBoundingClientRect().top + 80 ;
+        //window.scrollTo({top: y, behavior: 'smooth'});
+        //el.scrollIntoView({behavior: "smooth", block: "start"});
+        //el.scrollTo({behavior: "smooth", block: "start"});
+
+    }
+}
+
+
+function navi(page: ModelPage) {
+
+    if (page.type == "link-extern") {
+        if (page.link) {
+            window.open(page.link, '_blank');            
+         }
+    }
+
+    if (page.type == "link") {
+        if (page.link) {
+            if (route.path != page.link) {
+                router.push(page.link)
+                return
+            }       
+         }
+    }
+
+    if (page.type == "chapter") {
+        let chapter = appStore.pages.get(page.id)
+        if (chapter) {
+            if (chapter.pages && chapter.pages.length > 0) {
+                
+                let p = chapter.pages[0]
+                if (p && p.link && route.path != p.link) {
+                    router.push(p.link)
+                    return
+                }
+            }
+
+        }
+    }
+
+    if (page.show) {
+        page.show = false
+    }else {
+        page.show = true
     }
 }
 
@@ -58,6 +112,7 @@ onBeforeRouteLeave((to, from) => {
         }
     })
 */
+
 
 onBeforeRouteUpdate( (to, from) => {
     if (to.path !== from.path) {

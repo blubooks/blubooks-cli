@@ -64,8 +64,12 @@ export const useAppStore = defineStore('app', {
     isLoading: false,
     navi: {} as ModelNavi,
     content: {} as ModelContent,
+    currentParents: [] as Array<ModelPage>,
+    currentPage: {} as ModelPage,
+    currentChapter: {} as ModelPage,
     pagesIdx: new Map<string, string>(),
     pages: new Map<string, ModelPage>(),
+    chapters: new Map<string, ModelPage>(),
     contents: new Map<string, ModelContent>()
   }),
   getters: {
@@ -84,10 +88,28 @@ export const useAppStore = defineStore('app', {
    
     openNavi(path: string) {
       const pg = findCurrent(this.navi.pages, path);
-      let parents = findParents(this.navi, pg.id)
-      if (parents && parents.length && parents.length > 0) {
-        parents.forEach((p: ModelPage) => {
+
+      if (this.currentParents  && this.currentParents.length && this.currentParents.length > 0) {
+        this.currentParents.forEach((p: ModelPage) => {
+
+            if (p.link) {
+              if (this.navi.accordion) {
+                p.show = false
+              }
+            }
+            p.activeParent = false
+       
+        });
+      }
+      this.currentParents = findParents(this.navi, pg.id)
+
+      if (this.currentParents  && this.currentParents.length && this.currentParents.length > 0) {
+        this.currentParents.forEach((p: ModelPage) => {
             p.show = true
+            p.activeParent = true
+            if (p.type == "chapter") {
+              this.currentChapter = p;
+            }
         });
       }
     },
@@ -143,24 +165,21 @@ export const useAppStore = defineStore('app', {
           
           let navi = <ModelNavi>response.data;
           this.pagesIdx.set("/", navi.id)
-          /*
-          if (navi.header) {
-            this.prepareNavi(navi.header, 0, 1)
-          }
-          if (navi.footer) {
-            this.prepareNavi(navi.footer, 0, 1)
-          }
-          */
+               
           this.prepareNavi(navi.pages, 0, 1)
-          
-          /*
-          navi.subnavis.forEach(n => {
-            if(n.pages) {
-              this.prepareNavi(n.pages, 0, 1)
-            }
+
+          navi.pages.forEach(chapter => {
+              this.chapters.set(chapter.id, chapter)
+
           });
-          */
+    
+          if (navi.footer) {
+            this.prepareNavi(navi.footer, 0, 0)
+          }
+
           this.navi = navi
+
+
        
         },
         (err: any) => {
@@ -188,6 +207,7 @@ export const useAppStore = defineStore('app', {
           this.prepareNavi(page.pages, level, showLevel)
         }
       });
+
     }
   }
 

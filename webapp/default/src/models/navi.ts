@@ -8,6 +8,7 @@ export type ModelNavi = {
     footer: Array<ModelPage>
     subnavis: Array<ModelNavi>
     id: string
+    accordion: boolean
 };
 
 export type ModelContent = {
@@ -20,10 +21,11 @@ export type ModelContent = {
   
 export type ModelPage = {
     show: boolean
-
+    activeParent: boolean
+    actrive: boolean
     id: string
     level?: number
-    type: number
+    type: string
     title: string
     link?: string
     parent?: string

@@ -18,12 +18,30 @@ import (
 )
 
 const (
-	TypeGroup    int = 1
-	TypeMenuItem int = 2
-	TypeLink     int = 3
+	TypeChapter    string = "chapter"
+	TypeGroup      string = "group"
+	TypeLink       string = "link"
+	TypeExternLink string = "link-extern"
+	TypeOtherLink  string = "link-other"
 )
 
 var naviUrlIds map[string]string
+
+type MetaData struct {
+	Header struct {
+		Pages      []Page `json:"pages"`
+		Hide       bool   `json:"hide"`
+		HideNavi   bool   `json:"showNavi"`
+		BeforeNavi bool   `json:"beforeNavi"`
+	}
+	Footer struct {
+		Hide  bool   `json:"hide"`
+		Pages []Page `json:"pages"`
+	}
+	Navi struct {
+		Accordion bool `json:"accordion"`
+	}
+}
 
 type Page struct {
 	Id         string  `json:"id,omitempty"`
@@ -32,7 +50,7 @@ type Page struct {
 	ParentLink *string `json:"parent,omitempty"`
 	ParentId   *string `json:"parentId,omitempty"`
 	Level      int     `json:"level,omitempty"`
-	Type       int     `json:"type,omitempty"`
+	Type       string  `json:"type,omitempty"`
 	Title      *string `json:"title,omitempty"`
 	Link       *string `json:"link,omitempty"`
 	ExternLink bool    `json:"extern,omitempty"`
@@ -41,11 +59,13 @@ type Page struct {
 }
 
 type Navi struct {
-	Title  *string `json:"title,omitempty"`
-	Header []Page  `json:"header,omitempty"`
-	Footer []Page  `json:"footer,omitempty"`
-	Pages  []Page  `json:"pages,omitempty"`
-	Root   *Page   `json:"root,omitempty"`
+	Title       *string `json:"title,omitempty"`
+	Description string  `json:"description,omitempty"`
+	Header      []Page  `json:"header,omitempty"`
+	Footer      []Page  `json:"footer,omitempty"`
+	Pages       []Page  `json:"pages,omitempty"`
+	Root        *Page   `json:"root,omitempty"`
+	Accordion   bool    `json:"accordion,omitempty"`
 }
 
 func getUrlId(url string) string {
@@ -86,10 +106,14 @@ func createLink(page *Page, navi *Navi) {
 				page.ExternLink = true
 				page.Link = page.DataLink
 				page.DataLink = nil
-			} else {
+				page.Type = TypeExternLink
 
+			} else {
 				if strings.HasSuffix(*page.DataLink, ".md") {
 					page.Id = getUrlId(*page.Link)
+					page.Type = TypeLink
+				} else {
+					page.Type = TypeOtherLink
 				}
 				page.Link = createLinkString(page.DataLink)
 				if navi.Root == nil && *page.DataLink == "README.md" {
@@ -118,26 +142,6 @@ func listitemlink(page *Page, node ast.Node, source *[]byte, navi *Navi) {
 
 				page.Link = &linkStr
 				createLink(page, navi)
-				/*
-					page.DataLink = &linkStr
-					if page.DataLink != nil {
-
-						matched, _ := regexp.MatchString(`^(?:[a-z+]+:)?//`, *page.DataLink)
-						if matched {
-							page.ExternLink = true
-							page.Link = page.DataLink
-							page.DataLink = nil
-						} else {
-							if strings.HasSuffix(*page.DataLink, ".md") {
-								page.Link = createLinkString(&linkStr)
-								page.Id = getUrlId(*page.Link)
-
-							}
-
-						}
-					}
-				*/
-
 			}
 		}
 		var err error
@@ -166,7 +170,6 @@ func list(node ast.Node, initLevel int, page *Page, source *[]byte, navi *Navi) 
 
 					pg := Page{}
 					//pg.Id = ksuid.New().String()
-					pg.Type = TypeLink
 					pg.Level = level
 					pg.Parent = page
 
@@ -215,6 +218,16 @@ func metalinks(pages []Page, navi *Navi, parent *Page) {
 
 func genNavi() (*Navi, error) {
 	var navi Navi
+	var metaData MetaData
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	var subEntry Page
+	var chapter Page
+	var buf bytes.Buffer
+
+	context := parser.NewContext()
+	listLevel := 0
+	inNavi := false
+
 	naviUrlIds = make(map[string]string)
 
 	source, err := os.ReadFile("data/content/SUMMARY.md")
@@ -228,18 +241,12 @@ func genNavi() (*Navi, error) {
 		),
 	)
 
-	var buf bytes.Buffer
-	context := parser.NewContext()
-
 	if err := markdown.Convert(source, &buf, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
 
 	doc := markdown.Parser().Parse(text.NewReader([]byte(source)))
 	//doc := goldmark.DefaultParser().Parse(text.NewReader([]byte(source)))
-	listLevel := 0
-	inNavi := false
-	var entry Page
 
 	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		s := ast.WalkStatus(ast.WalkContinue)
@@ -250,35 +257,42 @@ func genNavi() (*Navi, error) {
 			if n.Kind() == ast.KindHeading {
 
 				h := n.(*ast.Heading)
-
+				t := string(n.Text([]byte(source)))
 				if h.Level == 1 {
-					t := string(n.Text([]byte(source)))
-					if !inNavi {
-						inNavi = true
+					if !chapter.Set && !inNavi {
 						navi.Title = &t
+						inNavi = true
 					}
 
-					/*
-						if !titleSet && h.Level == 1 && navi.Title == "" {
-							titleSet = true
-							navi.Title = string(n.Text([]byte(source)))
-					*/
+				}
+				if h.Level == 2 {
+					inNavi = false
+					if chapter.Set {
+						navi.Pages = append(navi.Pages, chapter)
+					}
+					chapter = Page{
+						Id:    ksuid.New().String(),
+						Set:   true,
+						Level: listLevel,
+						Type:  TypeChapter,
+						Title: &t,
+					}
+					p := chapter
 
-				} else if h.Level == 2 {
-					if inNavi {
-						if entry.Set {
+					navi.Header = append(navi.Header, p)
 
-							navi.Pages = append(navi.Pages, entry)
+				} else if h.Level == 3 {
+					if chapter.Set {
+						if subEntry.Set {
+							chapter.Pages = append(chapter.Pages, subEntry)
 						}
 
-						titleStr := string(n.Text([]byte(source)))
-
-						entry = Page{
+						subEntry = Page{
 							Id:    ksuid.New().String(),
 							Set:   true,
 							Level: listLevel,
 							Type:  TypeGroup,
-							Title: &titleStr,
+							Title: &t,
 						}
 
 					}
@@ -286,11 +300,10 @@ func genNavi() (*Navi, error) {
 				}
 
 			} else if n.Kind() == ast.KindThematicBreak {
-				if inNavi {
-
-					if entry.Set {
-						navi.Pages = append(navi.Pages, entry)
-						entry = Page{}
+				if chapter.Set {
+					if subEntry.Set {
+						chapter.Pages = append(chapter.Pages, subEntry)
+						subEntry = Page{}
 					}
 				}
 
@@ -301,38 +314,33 @@ func genNavi() (*Navi, error) {
 
 				if listLevel == 1 {
 
-					if inNavi {
+					if chapter.Set {
 
 						pg := Page{}
 						pg.Set = true
-
-						pg.Type = TypeMenuItem
 						pg.Level = listLevel
-
-						if entry.Id != "" {
-							//pg.Parent = &entry
-							id := entry.Id
+						if subEntry.Id != "" {
+							id := subEntry.Id
 							pg.ParentId = &id
 						}
-
 						listitemlink(&pg, n.FirstChild(), &source, &navi)
-
-						/*
-							if entry.Id != "" {
-								pg.Parent = &entry
-								pg.ParentId = &entry.Id
-							}
-						*/
-
 						list(n, 1, &pg, &source, &navi)
 
-						if entry.Type == 1 {
-							entry.Pages = append(entry.Pages, pg)
+						if subEntry.Type == TypeGroup {
+							subEntry.Pages = append(subEntry.Pages, pg)
 						} else {
-							navi.Pages = append(navi.Pages, pg)
+							chapter.Pages = append(chapter.Pages, pg)
 						}
 					}
 
+				}
+			} else if n.Kind() == ast.KindParagraph {
+				if inNavi && navi.Title != nil {
+					if navi.Description == "" {
+						navi.Description = string(n.Text(source))
+					} else {
+						navi.Description = navi.Description + "\n" + string(n.Text(source))
+					}
 				}
 			}
 
@@ -341,13 +349,10 @@ func genNavi() (*Navi, error) {
 				listLevel = listLevel - 1
 
 			} else if n.Kind() == ast.KindDocument {
-				if inNavi {
-					if entry.Set {
-						navi.Pages = append(navi.Pages, entry)
-
-					}
-
+				if chapter.Set {
+					navi.Pages = append(navi.Pages, chapter)
 				}
+
 			}
 		}
 
@@ -356,7 +361,6 @@ func genNavi() (*Navi, error) {
 
 	if navi.Root == nil {
 		pg := Page{}
-		//pg.Id = ksuid.New().String()
 		pg.Type = TypeLink
 		pg.Level = 0
 		l := "README.md"
@@ -364,30 +368,77 @@ func genNavi() (*Navi, error) {
 		createLink(&pg, &navi)
 	}
 
-	var json = jsoniter.ConfigCompatibleWithStandardLibrary
-	metaData := meta.Get(context)
-
-	header := metaData["header"]
+	header := meta.Get(context)["header"]
 	if header != nil {
 		jsonString, err := json.Marshal(header)
 		if err == nil {
-			var ml []Page
-			json.Unmarshal(jsonString, &ml)
-			navi.Header = ml
-			metalinks(navi.Header, &navi, nil)
-		}
+			err := json.Unmarshal(jsonString, &metaData.Header)
+			if err == nil {
 
+				if metaData.Header.Hide {
+					navi.Header = nil
+
+				} else {
+					if metaData.Header.HideNavi {
+						navi.Header = nil
+					}
+
+					if len(metaData.Header.Pages) > 0 {
+						metalinks(metaData.Header.Pages, &navi, nil)
+						if metaData.Header.BeforeNavi {
+							navi.Header = append(metaData.Header.Pages, navi.Header...)
+						} else {
+							navi.Header = append(navi.Header, metaData.Header.Pages...)
+
+						}
+					}
+
+				}
+
+			}
+
+		}
 	}
-	footer := metaData["footer"]
-	if footer != nil {
+
+	footer := meta.Get(context)["footer"]
+	if header != nil {
 		jsonString, err := json.Marshal(footer)
 		if err == nil {
-			var ml []Page
-			json.Unmarshal(jsonString, &ml)
-			navi.Footer = ml
-			metalinks(navi.Footer, &navi, nil)
-		}
+			err := json.Unmarshal(jsonString, &metaData.Footer)
+			if err == nil {
+				if metaData.Footer.Hide {
+					navi.Footer = nil
 
+				} else {
+
+					if len(metaData.Footer.Pages) > 0 {
+						metalinks(metaData.Footer.Pages, &navi, nil)
+
+						navi.Footer = append(navi.Footer, metaData.Footer.Pages...)
+
+					}
+
+				}
+
+			}
+
+		}
+	}
+
+	naviOptions := meta.Get(context)["navi"]
+	if naviOptions != nil {
+		jsonString, err := json.Marshal(naviOptions)
+		if err == nil {
+			err := json.Unmarshal(jsonString, &metaData.Navi)
+			if err == nil {
+				if metaData.Navi.Accordion {
+					navi.Accordion = true
+
+				}
+
+			}
+
+		}
 	}
 
 	return &navi, nil
