@@ -10,6 +10,8 @@ import (
 	"strings"
 
 	"github.com/blubooks/blubooks-cli/pkg/goldmark/baseurl"
+	"github.com/segmentio/ksuid"
+	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
 	"go.abhg.dev/goldmark/toc"
@@ -40,16 +42,18 @@ type PageContent struct {
 	Id    string        `json:"id"`
 }
 
-func Build(dev bool) error {
-	//naviUrlIds = make(map[string]string)
-	//summaryUrls = make(map[string]string)
-	//var navi Navi
-	navi, err := genNavi()
-	if err != nil {
-		return err
-	}
+type SearchPage struct {
+	Title string `json:"title,omitempty"`
+	Text  string `json:"text,omitempty"`
+	Id    string `json:"id"`
+	Path  string `json:"path"`
+}
 
-	naviBytes, err := json.Marshal(navi)
+var search map[string]SearchPage
+
+func Build(dev bool) error {
+	search = make(map[string]SearchPage)
+	navi, err := genNavi()
 	if err != nil {
 		return err
 	}
@@ -77,17 +81,42 @@ func Build(dev bool) error {
 		}
 
 	}
-	// ApiFiles
 	_ = os.MkdirAll("public/api/", os.ModePerm)
-	err = os.WriteFile("public/api/navi.json", naviBytes, os.ModePerm)
-	if err != nil {
-		return err
-	}
+
 	//writeJson("README.md", navi.Id)
 	genPages(navi.Pages)
 
 	if navi.Root != nil {
 		genPage(navi.Root)
+	}
+
+	var searchResults []SearchPage
+	for _, v := range search {
+		searchResults = append(searchResults, v)
+	}
+
+	searchBytes, err := json.Marshal(searchResults)
+	if err != nil {
+		return err
+	}
+
+	searchId := ksuid.New().String()
+	err = os.WriteFile("public/api/"+searchId+".json", searchBytes, os.ModePerm)
+	if err == nil {
+		navi.SearchId = &searchId
+	} else {
+		log.Println(err)
+	}
+
+	naviBytes, err := json.Marshal(navi)
+	if err != nil {
+		return err
+	}
+
+	// ApiFiles
+	err = os.WriteFile("public/api/navi.json", naviBytes, os.ModePerm)
+	if err != nil {
+		return err
 	}
 
 	/*
@@ -141,7 +170,44 @@ func genPage(s *Page) {
 	if s.Link != nil && s.DataLink != nil {
 		writeJson(*s.DataLink, s.Id)
 
+		_, ok := search[s.Id]
+		if !ok {
+			var searchPage SearchPage
+
+			searchPage.Id = s.Id
+			searchPage.Title = *s.Title
+			searchPage.Path = *s.Link
+
+			source, err := os.ReadFile("data/content/" + *s.DataLink)
+			if err == nil {
+				markdown := goldmark.New(
+					goldmark.WithExtensions(
+						meta.Meta,
+					),
+				)
+				doc := markdown.Parser().Parse(text.NewReader([]byte(source)))
+				ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+					walk := ast.WalkStatus(ast.WalkContinue)
+					var err error
+					if entering {
+						if n.FirstChild() != nil {
+							t := string(n.FirstChild().Text(source))
+
+							searchPage.Text = searchPage.Text + " " + t
+
+						}
+					}
+					return walk, err
+				})
+				searchPage.Text = strings.Trim(searchPage.Text, " ")
+
+			}
+			search[s.Id] = searchPage
+
+		}
+
 	}
+
 	if len(s.Pages) > 0 {
 		genPages(s.Pages)
 	}
@@ -229,6 +295,7 @@ func loadMarkdown(filename string, content *PageContent) error {
 	if err := markdown.Convert(source, &buf); err != nil {
 		return err
 	}
+
 	content.Html = buf.String()
 
 	return nil

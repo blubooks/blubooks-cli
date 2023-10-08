@@ -2,8 +2,7 @@
 
 import { defineStore } from 'pinia'
 import appService from '../services/app.service'
-import  { ModelContent, ModelNavi, ModelPage } from '../models/navi'
-
+import  { ModelContent, ModelNavi, ModelPage, ModelSearch } from '../models/navi'
 
 /*
 function isObjEmpty (obj: any) {
@@ -70,17 +69,25 @@ export const useAppStore = defineStore('app', {
     pagesIdx: new Map<string, string>(),
     pages: new Map<string, ModelPage>(),
     chapters: new Map<string, ModelPage>(),
-    contents: new Map<string, ModelContent>()
+    contents: new Map<string, ModelContent>(),
+    searchOpened: false,
+    searchResult: [] as Array<ModelSearch>,
+    searchData: [] as Array<ModelSearch>,
   }),
   getters: {
 
   }, 
   actions: {
-    
     startLoading() {
       this.isRequesting = true  
       this.isLoading = true;
     },    
+    closeSearch() {
+      this.searchOpened = false
+    },   
+    openSearch() {
+      this.searchOpened = true
+    },      
     endLoad() {
       this.isRequesting = false;
       this.isLoading = false;
@@ -170,7 +177,6 @@ export const useAppStore = defineStore('app', {
 
           navi.pages.forEach(chapter => {
               this.chapters.set(chapter.id, chapter)
-
           });
     
           if (navi.footer) {
@@ -187,6 +193,26 @@ export const useAppStore = defineStore('app', {
         }
       )
     },
+    loadSearch(){
+      if (this.searchData.length > 0) {
+        return Promise.resolve();    
+      }
+      if (this.navi.searchId) {
+        return appService.loadJson(this.navi.searchId + ".json").then(
+          (response: any) => {
+            
+            let searchData = <Array<ModelSearch>>response.data;  
+            this.searchData = searchData
+           
+          },
+          (err: any) => {
+            return Promise.reject(err);
+          }
+        )        
+      }
+      return Promise.reject(); 
+    },  
+     
     prepareNavi(pages: Array<ModelPage>, level: number, showLevel: number) {
       level = level +1;
       pages.forEach(page => {

@@ -66,6 +66,7 @@ type Navi struct {
 	Pages       []Page  `json:"pages,omitempty"`
 	Root        *Page   `json:"root,omitempty"`
 	Accordion   bool    `json:"accordion,omitempty"`
+	SearchId    *string `json:"searchId,omitempty"`
 }
 
 func getUrlId(url string) string {

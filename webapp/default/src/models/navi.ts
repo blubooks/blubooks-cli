@@ -9,12 +9,20 @@ export type ModelNavi = {
     subnavis: Array<ModelNavi>
     id: string
     accordion: boolean
+    searchId?: string
 };
 
 export type ModelContent = {
     html:string
     toc: Array<ModelToc>
     id: string
+};
+
+export type ModelSearch = {
+    title: string
+    id: string
+    path: string
+    text?: string
 };
 
 

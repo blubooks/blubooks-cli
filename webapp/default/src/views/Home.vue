@@ -1,4 +1,5 @@
 <template>
+    <SearchModal v-if="appStore.navi.searchId"  @navi="navi"></SearchModal>
     <header id="bl-header">
         <div class="bl-container"> 
             <div class="bl-inner">
@@ -40,6 +41,7 @@ import {onMounted } from 'vue'
 import { useAppStore } from "../stores/app";
 import Navi from '../components/Navi.vue'
 import Toc from '../components/Toc.vue'
+import SearchModal from '../components/SearchModal.vue'
 import HeaderNav from '../components/HeaderNav.vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { ModelPage } from '../models/navi';

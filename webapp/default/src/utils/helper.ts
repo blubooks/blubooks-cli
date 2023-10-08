@@ -25,3 +25,20 @@ export function findArrayIndex(array: any, col: string, wert: any, col2?: string
     }
     return lReturn;
   }
+
+  export const debounce = (func: any, delay = 600, immediate = false) => {
+    let timeout: any
+    return function () {
+    //@ts-ignore
+      const context = this
+      const args = arguments
+      const later = function () {
+        timeout = null
+        if (!immediate) func.apply(context, args)
+      }
+      const callNow = immediate && !timeout
+      clearTimeout(timeout)
+      timeout = setTimeout(later, delay)
+      if (callNow) func.apply(context, args)
+    }
+  }
