@@ -1,4 +1,5 @@
 <template>
+
     <SearchModal v-if="appStore.navi.searchId"  @navi="navi"></SearchModal>
     <header id="bl-header" class="bl-header">
         <div class="bl-container"> 
@@ -10,6 +11,9 @@
 
     </header>   
     <div id="bl-view" class="bl-view bl-container">
+    
+  
+
         <nav id="bl-nav" class="bl-nav">
             <div class="bl-nav-inner">
                 <Navi @navi="navi"></Navi>
@@ -141,8 +145,7 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
-
+<style >
 
 
 </style>

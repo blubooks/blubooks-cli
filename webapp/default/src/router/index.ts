@@ -11,16 +11,20 @@ const routes = [
     component: () => import("../views/Home.vue"),
   },
   {
-    name: "home",
-    path: "/n/:navi/:pathMatch(.*)",
-    component: () => import("../views/Home.vue"),
+    name: "Print",
+    path: "/p/:pathMatch(.*)",
+    component: () => import("../views/Print.vue"),
   }, 
+  {
+    name: "Print",
+    path: "/p",
+    component: () => import("../views/Print.vue"),
+  },   
   {
     name: "home",
     path: "/:pathMatch(.*)",
     component: () => import("../views/Home.vue"),
-  }    
-
+  },  
 ]
 
 const router = createRouter({

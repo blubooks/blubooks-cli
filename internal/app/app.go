@@ -48,6 +48,18 @@ type SearchPage struct {
 	Id    string `json:"id"`
 	Path  string `json:"path"`
 }
+type PagePDF struct {
+	Title string `json:"title,omitempty"`
+	Text  string `json:"text,omitempty"`
+	Id    string `json:"id"`
+	Path  string `json:"path"`
+}
+type PDF struct {
+	Title    string `json:"title,omitempty"`
+	SubTtile string `json:"subTitle,omitempty"`
+	Text     string `json:"text,omitempty"`
+	Pages    string `json:"page"`
+}
 
 var search map[string]SearchPage
 
