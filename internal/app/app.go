@@ -16,10 +16,22 @@ import (
 	"github.com/yuin/goldmark/text"
 	"go.abhg.dev/goldmark/toc"
 
+	embed "github.com/13rac1/goldmark-embed"
+	d2 "github.com/FurqanSoftware/goldmark-d2"
+	katex "github.com/FurqanSoftware/goldmark-katex"
+	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/blubooks/blubooks-cli/pkg/tools"
 	replacer "github.com/fundipper/goldmark-replacer"
+	pikchr "github.com/jchenry/goldmark-pikchr"
+	attributes "github.com/mdigger/goldmark-attributes"
+	img64 "github.com/tenkoh/goldmark-img64"
 	"github.com/yuin/goldmark"
+	emoji "github.com/yuin/goldmark-emoji"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	meta "github.com/yuin/goldmark-meta"
+	"github.com/yuin/goldmark/extension"
+	"go.abhg.dev/goldmark/frontmatter"
+	"go.abhg.dev/goldmark/mermaid"
 )
 
 type App struct {
@@ -74,7 +86,9 @@ func Build(dev bool) error {
 	_ = os.RemoveAll("public")
 	_ = os.MkdirAll("public", os.ModePerm)
 	_ = os.MkdirAll("public/files", os.ModePerm)
+	_ = os.MkdirAll("public/files/print", os.ModePerm)
 	tools.CopyDir("data/content/.data/assets", "public/files")
+	tools.CopyDir("data/content/.data/print/default", "public/files/print")
 
 	if !dev {
 
@@ -259,10 +273,36 @@ func loadMarkdown(filename string, content *PageContent) error {
 		return err
 	}
 
-	markdown := goldmark.New(
-		goldmark.WithParserOptions(parser.WithAutoHeadingID()),
+	markdown := goldmark.New(attributes.Enable,
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
 		goldmark.WithExtensions(
-			meta.Meta,
+			extension.Table,
+			extension.Strikethrough,
+			extension.TaskList,
+			extension.GFM,
+			extension.DefinitionList,
+			extension.Typographer,
+			extension.Footnote,
+			//meta.Meta,
+			emoji.Emoji,
+			embed.New(),
+			&frontmatter.Extender{},
+			&mermaid.Extender{},
+			&pikchr.Extender{},
+			//latex.NewLatex(),
+			&d2.Extender{},
+			&katex.Extender{},
+			img64.NewImg64(),
+			//&mathjax.MathJax.Extend(),
+
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("monokai"),
+				highlighting.WithFormatOptions(
+					chromahtml.WithLineNumbers(true),
+				),
+			),
 			replacer.NewExtender(
 				"(c)", "&copy;",
 				"(r)", "&reg;",

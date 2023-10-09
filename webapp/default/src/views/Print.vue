@@ -1,5 +1,13 @@
 <template>
-        <div>hallo</div>
+  <div class="bl-doc-header">
+    <div>header</div>
+  </div>
+  <div class="bl-doc-footer">
+    <div>footer</div>
+  </div>
+  <div class="bl-doc-frontpage">hallo</div>
+  <div class="bl-doc-page-break-before">hallo</div>
+  <h1></h1>
 
 </template>
 <script lang="ts" setup>
@@ -23,9 +31,51 @@ import { onMounted } from 'vue';
 
 </script>
 
-<style lang="css">
-@page {
-  size: A4;
+<style lang="css" scope>
+
+@media screen, pagedjs-ignore {
+    body {
+        background-color: #cccccc;
+    }
+    .pagedjs_page {
+        background-color: #ffffff;
+        border: 1px solid #000000;
+        margin: 40px auto;
+    }
+  }
+
  
+</style>
+<style lang="css">
+
+
+  
+
+@page {
+  
+  @top-center {
+    content: element(header);
+  }
+  
+  @bottom-center {
+    content: element(footer);
+  }
+  
 }
+
+.bl-doc-header {
+  display: block;
+  position: running(header);
+}
+
+.bl-doc-footer {
+  display: block;
+  position: running(footer);
+}
+
+.bl-doc-page-break-before {
+  break-before: page;
+}
+
+ 
 </style>

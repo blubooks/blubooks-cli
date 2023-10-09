@@ -35,7 +35,7 @@ Beschreibung 1
 
 Beschreibung 2 ***test*** test
 
-## Home
+## Guide
 
 - [start](README.md)
 - [test](test.md)
