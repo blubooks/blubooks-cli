@@ -1,6 +1,6 @@
 ---
 header:
-  #hide: false
+  hide: false
   #hideNavi: false
   #beforeNavi: false
   pages:
@@ -25,7 +25,8 @@ footer:
       link: "https://gitea.cidb.de"
     - title: test
       link: "test.md"
-navi: 
+
+#options: 
   #showLevel: 1
   #accordion: false
 ---

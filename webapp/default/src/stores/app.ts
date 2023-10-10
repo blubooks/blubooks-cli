@@ -65,10 +65,10 @@ export const useAppStore = defineStore('app', {
     content: {} as ModelContent,
     currentParents: [] as Array<ModelPage>,
     currentPage: {} as ModelPage,
-    currentChapter: {} as ModelPage,
+    currentBook: {} as ModelPage,
     pagesIdx: new Map<string, string>(),
     pages: new Map<string, ModelPage>(),
-    chapters: new Map<string, ModelPage>(),
+    books: new Map<string, ModelPage>(),
     contents: new Map<string, ModelContent>(),
     searchOpened: false,
     searchResult: [] as Array<ModelSearch>,
@@ -114,8 +114,8 @@ export const useAppStore = defineStore('app', {
         this.currentParents.forEach((p: ModelPage) => {
             p.show = true
             p.activeParent = true
-            if (p.type == "chapter") {
-              this.currentChapter = p;
+            if (p.type == "book") {
+              this.currentBook = p;
             }
         });
       }
@@ -175,8 +175,8 @@ export const useAppStore = defineStore('app', {
                
           this.prepareNavi(navi.pages, 0, 1)
 
-          navi.pages.forEach(chapter => {
-              this.chapters.set(chapter.id, chapter)
+          navi.pages.forEach(book => {
+              this.books.set(book.id, book)
           });
     
           if (navi.footer) {

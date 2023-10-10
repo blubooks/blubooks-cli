@@ -2,23 +2,23 @@ package app
 
 import (
 	"bytes"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/blubooks/blubooks-cli/pkg/tools"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/segmentio/ksuid"
 	"github.com/yuin/goldmark"
-	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
+	"go.abhg.dev/goldmark/frontmatter"
 )
 
 const (
-	TypeChapter    string = "chapter"
+	TypeBook       string = "book"
 	TypeGroup      string = "group"
 	TypeLink       string = "link"
 	TypeExternLink string = "link-extern"
@@ -27,20 +27,22 @@ const (
 
 var naviUrlIds map[string]string
 
-type MetaData struct {
-	Header struct {
-		Pages      []Page `json:"pages"`
-		Hide       bool   `json:"hide"`
-		HideNavi   bool   `json:"showNavi"`
-		BeforeNavi bool   `json:"beforeNavi"`
-	}
-	Footer struct {
-		Hide  bool   `json:"hide"`
-		Pages []Page `json:"pages"`
-	}
-	Navi struct {
-		Accordion bool `json:"accordion"`
-	}
+type NaviMetaData struct {
+	Header *struct {
+		Pages      []Page `json:"pages,omitempty"`
+		Hide       bool   `json:"hide,omitempty"`
+		HideNavi   bool   `json:"showNavi,omitempty"`
+		BeforeNavi bool   `json:"beforeNavi,omitempty"`
+	} `yaml:"header"`
+	Footer *struct {
+		Hide  bool   `json:"hide,omitempty"`
+		Pages []Page `json:"pages,omitempty"`
+	} `yaml:"footer"`
+	Options *Options `yaml:"options" json:"options,omitempty"`
+}
+
+type Options struct {
+	Accordion bool `json:"accordion,omitempty"`
 }
 
 type Page struct {
@@ -59,14 +61,14 @@ type Page struct {
 }
 
 type Navi struct {
-	Title       *string `json:"title,omitempty"`
-	Description string  `json:"description,omitempty"`
-	Header      []Page  `json:"header,omitempty"`
-	Footer      []Page  `json:"footer,omitempty"`
-	Pages       []Page  `json:"pages,omitempty"`
-	Root        *Page   `json:"root,omitempty"`
-	Accordion   bool    `json:"accordion,omitempty"`
-	SearchId    *string `json:"searchId,omitempty"`
+	Title       *string  `json:"title,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Header      []Page   `json:"header,omitempty"`
+	Footer      []Page   `json:"footer,omitempty"`
+	Pages       []Page   `json:"pages,omitempty"`
+	Root        *Page    `json:"root,omitempty"`
+	Options     *Options `json:"options,omitempty"`
+	SearchId    *string  `json:"searchId,omitempty"`
 }
 
 func getUrlId(url string) string {
@@ -219,10 +221,10 @@ func metalinks(pages []Page, navi *Navi, parent *Page) {
 
 func genNavi() (*Navi, error) {
 	var navi Navi
-	var metaData MetaData
-	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	var metaData NaviMetaData
+	//var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	var subEntry Page
-	var chapter Page
+	var book Page
 	var buf bytes.Buffer
 
 	context := parser.NewContext()
@@ -238,7 +240,9 @@ func genNavi() (*Navi, error) {
 
 	markdown := goldmark.New(
 		goldmark.WithExtensions(
-			meta.Meta,
+			&frontmatter.Extender{
+				//Mode: frontmatter.SetMetadata,
+			},
 		),
 	)
 
@@ -260,7 +264,7 @@ func genNavi() (*Navi, error) {
 				h := n.(*ast.Heading)
 				t := string(n.Text([]byte(source)))
 				if h.Level == 1 {
-					if !chapter.Set && !inNavi {
+					if !book.Set && !inNavi {
 						navi.Title = &t
 						inNavi = true
 					}
@@ -268,24 +272,24 @@ func genNavi() (*Navi, error) {
 				}
 				if h.Level == 2 {
 					inNavi = false
-					if chapter.Set {
-						navi.Pages = append(navi.Pages, chapter)
+					if book.Set {
+						navi.Pages = append(navi.Pages, book)
 					}
-					chapter = Page{
+					book = Page{
 						Id:    ksuid.New().String(),
 						Set:   true,
 						Level: listLevel,
-						Type:  TypeChapter,
+						Type:  TypeBook,
 						Title: &t,
 					}
-					p := chapter
+					p := book
 
 					navi.Header = append(navi.Header, p)
 
 				} else if h.Level == 3 {
-					if chapter.Set {
+					if book.Set {
 						if subEntry.Set {
-							chapter.Pages = append(chapter.Pages, subEntry)
+							book.Pages = append(book.Pages, subEntry)
 						}
 
 						subEntry = Page{
@@ -301,9 +305,9 @@ func genNavi() (*Navi, error) {
 				}
 
 			} else if n.Kind() == ast.KindThematicBreak {
-				if chapter.Set {
+				if book.Set {
 					if subEntry.Set {
-						chapter.Pages = append(chapter.Pages, subEntry)
+						book.Pages = append(book.Pages, subEntry)
 						subEntry = Page{}
 					}
 				}
@@ -315,7 +319,7 @@ func genNavi() (*Navi, error) {
 
 				if listLevel == 1 {
 
-					if chapter.Set {
+					if book.Set {
 
 						pg := Page{}
 						pg.Set = true
@@ -330,7 +334,7 @@ func genNavi() (*Navi, error) {
 						if subEntry.Type == TypeGroup {
 							subEntry.Pages = append(subEntry.Pages, pg)
 						} else {
-							chapter.Pages = append(chapter.Pages, pg)
+							book.Pages = append(book.Pages, pg)
 						}
 					}
 
@@ -350,8 +354,8 @@ func genNavi() (*Navi, error) {
 				listLevel = listLevel - 1
 
 			} else if n.Kind() == ast.KindDocument {
-				if chapter.Set {
-					navi.Pages = append(navi.Pages, chapter)
+				if book.Set {
+					navi.Pages = append(navi.Pages, book)
 				}
 
 			}
@@ -369,77 +373,51 @@ func genNavi() (*Navi, error) {
 		createLink(&pg, &navi)
 	}
 
-	header := meta.Get(context)["header"]
-	if header != nil {
-		jsonString, err := json.Marshal(header)
-		if err == nil {
-			err := json.Unmarshal(jsonString, &metaData.Header)
-			if err == nil {
+	d := frontmatter.Get(context)
+	if err := d.Decode(&metaData); err != nil {
+		log.Println(err)
+	}
 
-				if metaData.Header.Hide {
-					navi.Header = nil
+	if metaData.Header != nil {
+		if metaData.Header.Hide {
+			navi.Header = nil
+		} else {
+			if metaData.Header.HideNavi {
+				navi.Header = nil
+			}
 
+			if len(metaData.Header.Pages) > 0 {
+				metalinks(metaData.Header.Pages, &navi, nil)
+				if metaData.Header.BeforeNavi {
+					navi.Header = append(metaData.Header.Pages, navi.Header...)
 				} else {
-					if metaData.Header.HideNavi {
-						navi.Header = nil
-					}
-
-					if len(metaData.Header.Pages) > 0 {
-						metalinks(metaData.Header.Pages, &navi, nil)
-						if metaData.Header.BeforeNavi {
-							navi.Header = append(metaData.Header.Pages, navi.Header...)
-						} else {
-							navi.Header = append(navi.Header, metaData.Header.Pages...)
-
-						}
-					}
+					navi.Header = append(navi.Header, metaData.Header.Pages...)
 
 				}
+			}
+
+		}
+	}
+
+	if metaData.Footer != nil {
+
+		if metaData.Footer.Hide {
+			navi.Footer = nil
+
+		} else {
+
+			if len(metaData.Footer.Pages) > 0 {
+				metalinks(metaData.Footer.Pages, &navi, nil)
+
+				navi.Footer = append(navi.Footer, metaData.Footer.Pages...)
 
 			}
 
 		}
 	}
 
-	footer := meta.Get(context)["footer"]
-	if header != nil {
-		jsonString, err := json.Marshal(footer)
-		if err == nil {
-			err := json.Unmarshal(jsonString, &metaData.Footer)
-			if err == nil {
-				if metaData.Footer.Hide {
-					navi.Footer = nil
-
-				} else {
-
-					if len(metaData.Footer.Pages) > 0 {
-						metalinks(metaData.Footer.Pages, &navi, nil)
-
-						navi.Footer = append(navi.Footer, metaData.Footer.Pages...)
-
-					}
-
-				}
-
-			}
-
-		}
-	}
-
-	naviOptions := meta.Get(context)["navi"]
-	if naviOptions != nil {
-		jsonString, err := json.Marshal(naviOptions)
-		if err == nil {
-			err := json.Unmarshal(jsonString, &metaData.Navi)
-			if err == nil {
-				if metaData.Navi.Accordion {
-					navi.Accordion = true
-
-				}
-
-			}
-
-		}
+	if metaData.Options != nil {
+		navi.Options = metaData.Options
 	}
 
 	return &navi, nil

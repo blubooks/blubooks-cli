@@ -14,7 +14,7 @@ function navi(page: ModelPage) {
 </script>
 
 <template>
-    <NaviItem :pages="appStore.currentChapter.pages" :level="0" @navi="navi">
+    <NaviItem :pages="appStore.currentBook.pages" :level="0" @navi="navi">
     </NaviItem>
 </template>
 

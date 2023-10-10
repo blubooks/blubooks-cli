@@ -40,7 +40,7 @@ defineProps({
                         @click.prevent="$emit('navi', pg)">
                         {{ pg.title }}
                     </a>
-                    <span class="title" v-else  :class="{ 'active-item':appStore.currentChapter.id == pg.id }"   @click="$emit('navi', pg)">{{ pg.title }}</span>
+                    <span class="title" v-else  :class="{ 'active-item':appStore.currentBook.id == pg.id }"   @click="$emit('navi', pg)">{{ pg.title }}</span>
                 </div>
                 <HeaderNavItem v-if="pg.pages" :pages="pg.pages" :page="pg" :level="level + 1" @navi="navi" />
             </li>

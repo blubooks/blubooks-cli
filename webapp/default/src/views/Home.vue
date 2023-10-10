@@ -86,12 +86,12 @@ function navi(page: ModelPage) {
          }
     }
 
-    if (page.type == "chapter") {
-        let chapter = appStore.pages.get(page.id)
-        if (chapter) {
-            if (chapter.pages && chapter.pages.length > 0) {
+    if (page.type == "book") {
+        let book = appStore.pages.get(page.id)
+        if (book) {
+            if (book.pages && book.pages.length > 0) {
                 
-                let p = chapter.pages[0]
+                let p = book.pages[0]
                 if (p && p.link && route.path != p.link) {
                     router.push(p.link)
                     return

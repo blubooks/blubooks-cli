@@ -11,6 +11,7 @@ import (
 
 	"github.com/blubooks/blubooks-cli/pkg/goldmark/baseurl"
 	"github.com/segmentio/ksuid"
+	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
@@ -28,7 +29,6 @@ import (
 	"github.com/yuin/goldmark"
 	emoji "github.com/yuin/goldmark-emoji"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
-	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/extension"
 	"go.abhg.dev/goldmark/frontmatter"
 	"go.abhg.dev/goldmark/mermaid"
