@@ -3,6 +3,7 @@
 import { defineStore } from 'pinia'
 import appService from '../services/app.service'
 import  { ModelContent, ModelNavi, ModelPage, ModelSearch } from '../models/navi'
+import { load } from "protobufjs";
 
 /*
 function isObjEmpty (obj: any) {
@@ -167,6 +168,7 @@ export const useAppStore = defineStore('app', {
     }, 
     loadNavi(){
 
+     
       return appService.navi().then(
         (response: any) => {
           
@@ -192,6 +194,7 @@ export const useAppStore = defineStore('app', {
           return Promise.reject(err);
         }
       )
+     
     },
     loadSearch(){
       if (this.searchData.length > 0) {
@@ -213,6 +216,33 @@ export const useAppStore = defineStore('app', {
       return Promise.reject(); 
     },  
      
+    loadPerson() {
+      
+      load("./person.proto", (err, root: any) => {
+        console.log(root)
+        if (err) {
+          console.log("errr", err)
+          //throw err;
+
+        }
+      
+        // example code
+        const person = root.lookupType("app.Person");
+
+        console.log(person)
+        /*
+      
+        let message = AwesomeMessage.create({ awesomeField: "hello" });
+        console.log(`message = ${JSON.stringify(message)}`);
+      
+        let buffer = AwesomeMessage.encode(message).finish();
+        console.log(`buffer = ${Array.prototype.toString.call(buffer)}`);
+      
+        let decoded = AwesomeMessage.decode(buffer);
+        console.log(`decoded = ${JSON.stringify(decoded)}`);
+        */
+      });
+    },
     prepareNavi(pages: Array<ModelPage>, level: number, showLevel: number) {
       level = level +1;
       pages.forEach(page => {

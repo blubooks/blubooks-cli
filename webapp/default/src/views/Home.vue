@@ -139,6 +139,8 @@ onMounted(() => {
 
   }) 
 
+  appStore.loadPerson()
+
 });
 
 

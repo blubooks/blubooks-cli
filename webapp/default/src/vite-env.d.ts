@@ -1,2 +1,2 @@
 /// <reference types="vite/client" />
-//declare module "pagedjs" 
+declare module "pagedjs" 

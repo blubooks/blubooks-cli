@@ -16,6 +16,7 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
 	"go.abhg.dev/goldmark/toc"
+	"google.golang.org/protobuf/proto"
 
 	embed "github.com/13rac1/goldmark-embed"
 	d2 "github.com/FurqanSoftware/goldmark-d2"
@@ -166,6 +167,32 @@ func Build(dev bool) error {
 			}
 		}
 	*/
+
+	elliot := &Person{
+		Name: "Elliot",
+		Age:  24,
+	}
+	data, err := proto.Marshal(elliot)
+	if err != nil {
+		log.Fatal("marshaling error: ", err)
+	}
+
+	fmt.Println("dddddddddddddddddd", data)
+
+	newElliot := &Person{}
+	err = proto.Unmarshal(data, newElliot)
+	if err != nil {
+		log.Fatal("unmarshaling error: ", err)
+	}
+	fmt.Println(newElliot.GetAge())
+	fmt.Println(newElliot.GetName())
+
+	// ApiFiles
+	err = os.WriteFile("public/api/data.bin", data, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
 	return nil
 
 }
