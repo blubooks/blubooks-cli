@@ -44,6 +44,7 @@ import Navi from '../components/Navi.vue'
 import Toc from '../components/Toc.vue'
 import SearchModal from '../components/SearchModal.vue'
 import HeaderNav from '../components/HeaderNav.vue'
+
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { ModelPage } from '../models/navi';
 import  router  from '../router';

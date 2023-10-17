@@ -3,7 +3,7 @@
 import { defineStore } from 'pinia'
 import appService from '../services/app.service'
 import  { ModelContent, ModelNavi, ModelPage, ModelSearch } from '../models/navi'
-import { load } from "protobufjs";
+import  { Person } from '../models/person'
 
 /*
 function isObjEmpty (obj: any) {
@@ -217,31 +217,41 @@ export const useAppStore = defineStore('app', {
     },  
      
     loadPerson() {
-      
-      load("./person.proto", (err, root: any) => {
-        console.log(root)
-        if (err) {
-          console.log("errr", err)
-          //throw err;
 
+      function byteToUint8Array(byteArray: any) {
+        var uint8Array = new Uint8Array(byteArray.length);
+        for(var i = 0; i < uint8Array.length; i++) {
+            uint8Array[i] = byteArray[i];
         }
-      
-        // example code
-        const person = root.lookupType("app.Person");
+    
+        return uint8Array;
+    }
 
-        console.log(person)
-        /*
+      return appService.loadBinary().then(
+        (response: any) => {
+          let data = new Uint8Array(response.data);
+          console.log(data)
+
+          let person = Person.fromBinary(data)
+
+
+          console.log(person)
+          /*
+         let  person = Person.deserializeBinary(response.data)
+
       
-        let message = AwesomeMessage.create({ awesomeField: "hello" });
-        console.log(`message = ${JSON.stringify(message)}`);
-      
-        let buffer = AwesomeMessage.encode(message).finish();
-        console.log(`buffer = ${Array.prototype.toString.call(buffer)}`);
-      
-        let decoded = AwesomeMessage.decode(buffer);
-        console.log(`decoded = ${JSON.stringify(decoded)}`);
-        */
-      });
+          console.log(response.data)
+          console.log(person)
+          */
+          //let searchData = <Array<ModelSearch>>response.data;  
+          //this.searchData = searchData
+         
+        },
+        (err: any) => {
+          return Promise.reject(err);
+        }
+      )   
+
     },
     prepareNavi(pages: Array<ModelPage>, level: number, showLevel: number) {
       level = level +1;

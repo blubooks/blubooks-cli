@@ -137,6 +137,42 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz#d7c6e6755c78567a951e04ab52ef0fd26de59f32"
   integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
 
+"@protobuf-ts/plugin-framework@^2.9.1":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/plugin-framework/-/plugin-framework-2.9.1.tgz#b8a6b29386d34d54588230a620385534cff629fc"
+  integrity sha512-/4sHdsXjp6KKkbpcCLUHpMfdYsCaqqQHRAwoxVzHmltsotw06B/K9HglZtkQx0IpLO4eeF3vNr3n7qzjD3e2zA==
+  dependencies:
+    "@protobuf-ts/runtime" "^2.9.1"
+    typescript "^3.9"
+
+"@protobuf-ts/plugin@^2.9.1":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/plugin/-/plugin-2.9.1.tgz#46d043fd0e64cfd3afa1b8b207f81c2594fc0cd9"
+  integrity sha512-svkFSyFgTtaLdDFPGvd6cTu8qK5Nul5RizDCTcv0xWRzcPWtMiqbuCLKCv6E9gdpnAs3MPeQTnSABB2+NhfWBg==
+  dependencies:
+    "@protobuf-ts/plugin-framework" "^2.9.1"
+    "@protobuf-ts/protoc" "^2.9.1"
+    "@protobuf-ts/runtime" "^2.9.1"
+    "@protobuf-ts/runtime-rpc" "^2.9.1"
+    typescript "^3.9"
+
+"@protobuf-ts/protoc@^2.9.1":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/protoc/-/protoc-2.9.1.tgz#558f6d6e3f97af60e20a13fa01a17989078447db"
+  integrity sha512-/q2iVDwVDijfZlFZnnm3W6ALbybNskNSww88TfYBaJH49PuQMqhcXUPRu28UouJr9sc/Lr5k6t0TB9Nff3UIsA==
+
+"@protobuf-ts/runtime-rpc@^2.9.1":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/runtime-rpc/-/runtime-rpc-2.9.1.tgz#6a1c8f189005de5dc6bce7a18751ef3fe304c8eb"
+  integrity sha512-pzO20J6s07LTWcj8hKAXh/dAacU5HIVir6SANKXXH8G0pn0VIIB4FFECq5Hbv25/8PQoOGZ7iApq/DMHaSjGhg==
+  dependencies:
+    "@protobuf-ts/runtime" "^2.9.1"
+
+"@protobuf-ts/runtime@^2.9.1":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/runtime/-/runtime-2.9.1.tgz#faec7653ca9c01ced49b0ee01818d46b4b3cf2ac"
+  integrity sha512-ZTc8b+pQ6bwxZa3qg9/IO/M/brRkvr0tic9cSGgAsDByfPrtatT2300wTIRLDk8X9WTW1tT+FhyqmcrbMHTeww==
+
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"
@@ -556,6 +592,11 @@ glob-parent@~5.1.2:
   dependencies:
     is-glob "^4.0.1"
 
+google-protobuf@^3.21.2:
+  version "3.21.2"
+  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.21.2.tgz#4580a2bea8bbb291ee579d1fefb14d6fa3070ea4"
+  integrity sha512-3MSOYFO5U9mPGikIYCzK0SaThypfGgS6bHqrUGXG3DPHCrb+txNqeEcns1W0lkGfk0rCyNXm7xB9rMxnCiZOoA==
+
 he@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
@@ -780,6 +821,11 @@ type@^2.7.2:
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/type/-/type-2.7.2.tgz#2376a15a3a28b1efa0f5350dcf72d24df6ef98d0"
   integrity sha512-dzlvlNlt6AXU7EBSfpAscydQ7gXB+pPGsPnfJnZpiNJBDj7IaJzQlBZYGdEi4R9HmPdBv2XmWJ6YUtoTa7lmCw==
+
+typescript@^3.9:
+  version "3.9.10"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"
+  integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
 
 typescript@^5.0.2:
   version "5.2.2"

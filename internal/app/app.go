@@ -186,8 +186,21 @@ func Build(dev bool) error {
 	}
 	fmt.Println(newElliot.GetAge())
 	fmt.Println(newElliot.GetName())
+	/*
+		b := (*[2]uint8)(data)
 
-	// ApiFiles
+		outf, _ := os.Create("public/api/data.bin")
+		// ApiFiles
+		err = binary.Write(outf, binary.LittleEndian, b)
+
+		if err != nil {
+			return err
+		}
+		outf.Close()
+
+	*/
+	//7s := string(data[:])
+	//log.Println("DDDDDDDDDDDDDDDDDDDD", s)
 	err = os.WriteFile("public/api/data.bin", data, os.ModePerm)
 	if err != nil {
 		return err

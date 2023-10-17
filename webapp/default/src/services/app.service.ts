@@ -21,6 +21,23 @@ class AppService {
       appStore.endLoad()
     });
   }
+
+  loadBinary() {
+    const appStore = useAppStore()
+    appStore.startLoading()
+    return api.get("api/data.bin", {
+      // query URL without using browser cache
+      responseType: 'arraybuffer',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    }).finally(() => {
+      appStore.endLoad()
+    });
+  }
+
   loadJson(filename: string) {
 
   const appStore = useAppStore()

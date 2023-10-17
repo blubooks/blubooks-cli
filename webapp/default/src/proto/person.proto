@@ -1,10 +1,11 @@
 syntax="proto3";
-
+//protoc --go_out=. --go_opt=paths=source_relative   --go-grpc_out=. --go-grpc_opt=paths=source_relative  person.proto
 package app;
 
-
+option go_package  = "/";
 
 message Person {
       string name = 1;
       int32 age = 2;
 }
+
