@@ -128,7 +128,7 @@ func Build(dev bool) error {
 		return err
 	}
 
-	naviProto := &models.PageContent{}
+	naviProto := &models.Navi{}
 	json.Unmarshal(naviBytes, naviProto)
 
 	data, err := proto.Marshal(naviProto)
@@ -264,7 +264,6 @@ func writeJson(filename string, id string) {
 }
 
 func genPage(s *Page) {
-
 	if s.Link != nil && s.DataLink != nil {
 		writeJson(*s.DataLink, s.Id)
 

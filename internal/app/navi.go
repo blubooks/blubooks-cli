@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/blubooks/blubooks-cli/internal/app/models"
 	"github.com/blubooks/blubooks-cli/pkg/tools"
 	"github.com/segmentio/ksuid"
 	"github.com/yuin/goldmark"
@@ -46,18 +47,22 @@ type Options struct {
 }
 
 type Page struct {
-	Id         string  `json:"id,omitempty"`
-	Set        bool    `json:"-"`
-	Parent     *Page   `json:"-"`
-	ParentLink *string `json:"parent,omitempty"`
-	ParentId   *string `json:"parentId,omitempty"`
-	Level      int     `json:"level,omitempty"`
-	Type       string  `json:"type,omitempty"`
-	Title      *string `json:"title,omitempty"`
-	Link       *string `json:"link,omitempty"`
-	ExternLink bool    `json:"extern,omitempty"`
-	DataLink   *string `json:"data,omitempty"`
-	Pages      []Page  `json:"pages,omitempty"`
+	models.Page
+	Set    bool  `json:"-"`
+	Parent *Page `json:"-"`
+	/*
+	   Id         string  `json:"id,omitempty"`
+
+	   ParentLink *string `json:"parent,omitempty"`
+	   ParentId   *string `json:"parentId,omitempty"`
+	   Level      int     `json:"level,omitempty"`
+	   Type       string  `json:"type,omitempty"`
+	   Title      *string `json:"title,omitempty"`
+	   Link       *string `json:"link,omitempty"`
+	   ExternLink bool    `json:"extern,omitempty"`
+	   DataLink   *string `json:"data,omitempty"`
+	   Pages      []Page  `json:"pages,omitempty"`
+	*/
 }
 
 type Navi struct {
