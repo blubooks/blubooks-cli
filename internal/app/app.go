@@ -128,6 +128,17 @@ func Build(dev bool) error {
 		return err
 	}
 
+	naviProto := &models.PageContent{}
+	json.Unmarshal(naviBytes, naviProto)
+
+	data, err := proto.Marshal(naviProto)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile("public/api/navi", data, os.ModePerm)
+	if err != nil {
+		return err
+	}
 	// ApiFiles
 	err = os.WriteFile("public/api/navi.json", naviBytes, os.ModePerm)
 	if err != nil {
