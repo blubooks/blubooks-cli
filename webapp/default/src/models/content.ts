@@ -93,6 +93,14 @@ export interface Page {
      * @generated from protobuf field: string data = 10;
      */
     data: string;
+    /**
+     * @generated from protobuf field: bool show = 20;
+     */
+    show: boolean;
+    /**
+     * @generated from protobuf field: bool activeParent = 21;
+     */
+    activeParent: boolean;
 }
 /**
  * @generated from protobuf message app.Options
@@ -286,11 +294,13 @@ class Page$Type extends MessageType<Page> {
             { no: 7, name: "link", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "extern", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "pages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Page },
-            { no: 10, name: "data", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 10, name: "data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 20, name: "show", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 21, name: "activeParent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<Page>): Page {
-        const message = { id: "", title: "", parent: "", parentId: "", level: 0, type: "", link: "", extern: false, pages: [], data: "" };
+        const message = { id: "", title: "", parent: "", parentId: "", level: 0, type: "", link: "", extern: false, pages: [], data: "", show: false, activeParent: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Page>(this, message, value);
@@ -330,6 +340,12 @@ class Page$Type extends MessageType<Page> {
                     break;
                 case /* string data */ 10:
                     message.data = reader.string();
+                    break;
+                case /* bool show */ 20:
+                    message.show = reader.bool();
+                    break;
+                case /* bool activeParent */ 21:
+                    message.activeParent = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -373,6 +389,12 @@ class Page$Type extends MessageType<Page> {
         /* string data = 10; */
         if (message.data !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.data);
+        /* bool show = 20; */
+        if (message.show !== false)
+            writer.tag(20, WireType.Varint).bool(message.show);
+        /* bool activeParent = 21; */
+        if (message.activeParent !== false)
+            writer.tag(21, WireType.Varint).bool(message.activeParent);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

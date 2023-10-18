@@ -139,73 +139,7 @@ func Build(dev bool) error {
 	if err != nil {
 		return err
 	}
-	// ApiFiles
-	err = os.WriteFile("public/api/navi.json", naviBytes, os.ModePerm)
-	if err != nil {
-		return err
-	}
 
-	/*
-		for _, n := range navi.Header {
-			if len(n.Pages) > 0 {
-				page(n.Pages)
-			}
-		}
-		for _, n := range navi.Footer {
-			if len(n.Pages) > 0 {
-				page(n.Pages)
-			}
-		}
-
-
-		for _, n := range navi.Navis {
-			writeJson(strings.Replace(n.Summary, "SUMMARY.md", "README.md", 1), n.Id)
-			if len(n.Pages) > 0 {
-				page(n.Pages)
-
-			}
-		}
-	*/
-
-	/*
-		elliot := &models.Person{
-			Name: "Elliot",
-			Age:  24,
-		}
-		data, err := proto.Marshal(elliot)
-		if err != nil {
-			log.Fatal("marshaling error: ", err)
-		}
-
-		fmt.Println("dddddddddddddddddd", data)
-
-		newElliot := &models.Person{}
-		err = proto.Unmarshal(data, newElliot)
-		if err != nil {
-			log.Fatal("unmarshaling error: ", err)
-		}
-		fmt.Println(newElliot.GetAge())
-		fmt.Println(newElliot.GetName())
-		/*
-			b := (*[2]uint8)(data)
-
-			outf, _ := os.Create("public/api/data.bin")
-			// ApiFiles
-			err = binary.Write(outf, binary.LittleEndian, b)
-
-			if err != nil {
-				return err
-			}
-			outf.Close()
-
-
-		//7s := string(data[:])
-		//log.Println("DDDDDDDDDDDDDDDDDDDD", s)
-		err = os.WriteFile("public/api/data.bin", data, os.ModePerm)
-		if err != nil {
-			return err
-		}
-	*/
 	return nil
 
 }

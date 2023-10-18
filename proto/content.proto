@@ -28,6 +28,8 @@ message Page {
       bool extern = 8;
       repeated Page pages = 9;
       string data = 10;
+      bool show = 20;
+      bool activeParent = 21;
 }
 
 message Options {

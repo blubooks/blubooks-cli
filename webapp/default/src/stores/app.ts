@@ -2,9 +2,9 @@
 
 import { defineStore } from 'pinia'
 import appService from '../services/app.service'
-import  { ModelNavi, ModelPage, ModelSearch } from '../models/navi'
+import  { ModelSearch } from '../models/navi'
 import  { Person } from '../models/person'
-import  { PageContent } from '../models/content'
+import  { PageContent, Navi, Page } from '../models/content'
 
 /*
 function isObjEmpty (obj: any) {
@@ -63,14 +63,14 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     isRequesting: false,
     isLoading: false,
-    navi: {} as ModelNavi,
+    navi: {} as Navi,
     content: {} as PageContent,
-    currentParents: [] as Array<ModelPage>,
-    currentPage: {} as ModelPage,
-    currentBook: {} as ModelPage,
+    currentParents: [] as Array<Page>,
+    currentPage: {} as Page,
+    currentBook: {} as Page,
     pagesIdx: new Map<string, string>(),
-    pages: new Map<string, ModelPage>(),
-    books: new Map<string, ModelPage>(),
+    pages: new Map<string, Page>(),
+    books: new Map<string, Page>(),
     contents: new Map<string, PageContent>(),
     searchOpened: false,
     searchResult: [] as Array<ModelSearch>,
@@ -99,10 +99,10 @@ export const useAppStore = defineStore('app', {
       const pg = findCurrent(this.navi.pages, path);
 
       if (this.currentParents  && this.currentParents.length && this.currentParents.length > 0) {
-        this.currentParents.forEach((p: ModelPage) => {
+        this.currentParents.forEach((p: Page) => {
 
             if (p.link) {
-              if (this.navi.accordion) {
+              if (this.navi.options && this.navi.options.accordion) {
                 p.show = false
               }
             }
@@ -113,7 +113,7 @@ export const useAppStore = defineStore('app', {
       this.currentParents = findParents(this.navi, pg.id)
 
       if (this.currentParents  && this.currentParents.length && this.currentParents.length > 0) {
-        this.currentParents.forEach((p: ModelPage) => {
+        this.currentParents.forEach((p: Page) => {
             p.show = true
             p.activeParent = true
             if (p.type == "book") {
@@ -159,12 +159,7 @@ export const useAppStore = defineStore('app', {
         (response: any) => {
 
           let data = new Uint8Array(response.data);
-  
-          let content = PageContent.fromBinary(data)
-
-          console.log(content)
-
-          this.content = content
+          this.content = PageContent.fromBinary(data)
           this.contents.set(this.content.id, this.content)
           this.openNavi(path)
 
@@ -194,7 +189,9 @@ export const useAppStore = defineStore('app', {
       return appService.navi().then(
         (response: any) => {
           
-          let navi = <ModelNavi>response.data;
+          let data = new Uint8Array(response.data);
+          let navi  = Navi.fromBinary(data)
+
           this.pagesIdx.set("/", navi.id)
                
           this.prepareNavi(navi.pages, 0, 1)
@@ -247,7 +244,7 @@ export const useAppStore = defineStore('app', {
     },  
      
 
-    prepareNavi(pages: Array<ModelPage>, level: number, showLevel: number) {
+    prepareNavi(pages: Array<Page>, level: number, showLevel: number) {
       level = level +1;
       pages.forEach(page => {
         if (page.id) {
