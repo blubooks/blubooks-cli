@@ -1,6 +1,6 @@
 <script setup lang="ts">
 //import { useAppStore } from "../stores/app";
-import { ModelPage } from '../models/navi'
+import { Page } from '../models/content'
 import type { PropType } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -8,17 +8,17 @@ const route = useRoute();
 
 const emit = defineEmits(['navi'])
 
-function navi(page: ModelPage) {
+function navi(page: Page) {
     emit('navi', page)
 }
 
 defineProps({
     pages: {
-        type: Array<ModelPage>,
+        type: Array<Page>,
         required: true
     },
     page: {
-        type: Object as PropType<ModelPage>,
+        type: Object as PropType<Page>,
         required: false,
     },
     level: {

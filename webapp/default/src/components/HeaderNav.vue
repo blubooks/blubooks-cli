@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useAppStore } from "../stores/app";
 import  HeaderNavItem  from "./HeaderNavItem.vue";
-import { ModelPage } from '../models/navi'
+import { Page } from '../models/content'
 
 const appStore = useAppStore()
 const emit = defineEmits(['navi'])
 
-function navi(page: ModelPage) {
+function navi(page: Page) {
   emit('navi', page)
 }
 
