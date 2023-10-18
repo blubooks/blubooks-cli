@@ -43,19 +43,6 @@ func New() *App {
 	return &App{}
 }
 
-type PageTocItem struct {
-	Title string        `json:"title,omitempty"`
-	ID    string        `json:"id,omitempty"`
-	Items []PageTocItem `json:"items,omitempty"`
-}
-
-type PageContent struct {
-	Title string        `json:"title,omitempty"`
-	Html  string        `json:"html"`
-	TOC   []PageTocItem `json:"toc"`
-	Id    string        `json:"id"`
-}
-
 type SearchPage struct {
 	Title string `json:"title,omitempty"`
 	Text  string `json:"text,omitempty"`
@@ -169,67 +156,100 @@ func Build(dev bool) error {
 		}
 	*/
 
-	elliot := &models.Person{
-		Name: "Elliot",
-		Age:  24,
-	}
-	data, err := proto.Marshal(elliot)
-	if err != nil {
-		log.Fatal("marshaling error: ", err)
-	}
-
-	fmt.Println("dddddddddddddddddd", data)
-
-	newElliot := &models.Person{}
-	err = proto.Unmarshal(data, newElliot)
-	if err != nil {
-		log.Fatal("unmarshaling error: ", err)
-	}
-	fmt.Println(newElliot.GetAge())
-	fmt.Println(newElliot.GetName())
 	/*
-		b := (*[2]uint8)(data)
+		elliot := &models.Person{
+			Name: "Elliot",
+			Age:  24,
+		}
+		data, err := proto.Marshal(elliot)
+		if err != nil {
+			log.Fatal("marshaling error: ", err)
+		}
 
-		outf, _ := os.Create("public/api/data.bin")
-		// ApiFiles
-		err = binary.Write(outf, binary.LittleEndian, b)
+		fmt.Println("dddddddddddddddddd", data)
 
+		newElliot := &models.Person{}
+		err = proto.Unmarshal(data, newElliot)
+		if err != nil {
+			log.Fatal("unmarshaling error: ", err)
+		}
+		fmt.Println(newElliot.GetAge())
+		fmt.Println(newElliot.GetName())
+		/*
+			b := (*[2]uint8)(data)
+
+			outf, _ := os.Create("public/api/data.bin")
+			// ApiFiles
+			err = binary.Write(outf, binary.LittleEndian, b)
+
+			if err != nil {
+				return err
+			}
+			outf.Close()
+
+
+		//7s := string(data[:])
+		//log.Println("DDDDDDDDDDDDDDDDDDDD", s)
+		err = os.WriteFile("public/api/data.bin", data, os.ModePerm)
 		if err != nil {
 			return err
 		}
-		outf.Close()
-
 	*/
-	//7s := string(data[:])
-	//log.Println("DDDDDDDDDDDDDDDDDDDD", s)
-	err = os.WriteFile("public/api/data.bin", data, os.ModePerm)
-	if err != nil {
-		return err
-	}
-
 	return nil
 
 }
 
 func writeJson(filename string, id string) {
 	var err error
-	var c PageContent
+	var c models.PageContent
 
 	err = loadMarkdown(filename, &c)
 	if err != nil {
 		log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
 	}
 
-	c.Id = id
-	cJson, err := json.Marshal(c)
+	data, err := proto.Marshal(&c)
 	if err != nil {
-		log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
+		log.Printf("Error in err, proto.Marshal(&c): %v", err)
 	}
 
-	err = os.WriteFile("public/api/"+id+".json", cJson, os.ModePerm)
+	err = os.WriteFile("public/api/"+id, data, os.ModePerm)
 	if err != nil {
-		log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
+		log.Printf("Error in err, os.WriteFile(\"public/api/"+id+".json\", cJson, os.ModePerm): %v", err)
 	}
+	/*
+		var c PageContent
+
+		err = loadMarkdown(filename, &c)
+		if err != nil {
+			log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
+		}
+
+		c.Id = id
+		cJson, err := json.Marshal(c)
+		if err != nil {
+			log.Printf("Error in err, json.Marshal(c): %v", err)
+		}
+
+		err = os.WriteFile("public/api/"+id+".json", cJson, os.ModePerm)
+		if err != nil {
+			log.Printf("Error in err, os.WriteFile(\"public/api/"+id+".json\", cJson, os.ModePerm): %v", err)
+		}
+
+		myProto := &models.PageContent{}
+		json.Unmarshal(cJson, myProto)
+
+		data, err := proto.Marshal(myProto)
+		if err != nil {
+			log.Printf("Error in err, proto.Marshal(myProto): %v", err)
+		}
+
+		err = os.WriteFile("public/api/"+id, data, os.ModePerm)
+		if err != nil {
+			log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
+		}
+	*/
+
 }
 
 func genPage(s *Page) {
@@ -288,17 +308,17 @@ func genPages(pages []Page) {
 	}
 }
 
-func tocElements(items *toc.Items) []PageTocItem {
-	var its []PageTocItem
+func tocElements(items *toc.Items) []*models.PageTocItem {
+	var its []*models.PageTocItem
 	for _, item := range *items {
-		t := PageTocItem{
+		t := models.PageTocItem{
 			Title: string(item.Title),
-			ID:    string(item.ID),
+			Id:    string(item.ID),
 		}
 		if item.Items != nil {
 			t.Items = tocElements(&item.Items)
 		}
-		its = append(its, t)
+		its = append(its, &t)
 
 	}
 
@@ -306,7 +326,7 @@ func tocElements(items *toc.Items) []PageTocItem {
 
 }
 
-func loadMarkdown(filename string, content *PageContent) error {
+func loadMarkdown(filename string, content *models.PageContent) error {
 	var buf bytes.Buffer
 
 	source, err := os.ReadFile("data/content/" + filename)
@@ -379,7 +399,8 @@ func loadMarkdown(filename string, content *PageContent) error {
 			markdown.Renderer().Render(&tocBuf, source, list)
 
 			//content.TOC = tocBuf.String()
-			content.TOC = pageTocItems
+
+			content.Toc = pageTocItems
 
 		}
 

@@ -1,0 +1,47 @@
+syntax="proto3";
+package app;
+
+option go_package  = "/models";
+
+message PageTocItem  {
+      string id = 1;
+      string title = 2;
+      repeated PageTocItem items = 3;
+
+}
+
+message PageContent {
+      string id = 1;
+      string title = 2;
+      string html = 3;
+      repeated PageTocItem toc = 4;
+}
+
+message Page {
+      string id = 1;
+      string title = 2;
+      string parent = 3;
+      string parentId = 4;
+      int32 level = 5 ;
+      string type = 6;
+      string link = 7;
+      bool extern = 8;
+      repeated Page pages = 9;
+      string data = 10;
+}
+
+message Options {
+      bool accordion = 1;
+}
+
+message Navi {
+      string id = 1;
+      string title = 2;
+      string description = 3;
+      repeated Page header = 4;
+      repeated Page footer = 5;
+      repeated Page pages = 6;
+      Page root = 7;
+      Options options = 8;
+      string searchId = 9;
+}

@@ -22,7 +22,7 @@ class AppService {
     });
   }
 
-  loadBinary() {
+  loadNaviBinary() {
     const appStore = useAppStore()
     appStore.startLoading()
     return api.get("api/data.bin", {
@@ -33,6 +33,16 @@ class AppService {
         'Pragma': 'no-cache',
         'Expires': '0',
       },
+    }).finally(() => {
+      appStore.endLoad()
+    });
+  }
+
+  loadBinary(filename: string) {
+    const appStore = useAppStore()
+    appStore.startLoading()
+    return api.get("api/" + filename, {
+      responseType: 'arraybuffer',
     }).finally(() => {
       appStore.endLoad()
     });

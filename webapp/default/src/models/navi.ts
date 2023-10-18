@@ -12,11 +12,7 @@ export type ModelNavi = {
     searchId?: string
 };
 
-export type ModelContent = {
-    html:string
-    toc: Array<ModelToc>
-    id: string
-};
+
 
 export type ModelSearch = {
     title: string

@@ -10,5 +10,5 @@ run-client:
 
 protoc:
 	yarn --cwd webapp/default run protoc
-	protoc --go_out=internal/app   --go-grpc_out=internal/app  proto/person.proto
+	protoc --go_out=internal/app   --go-grpc_out=internal/app proto/content.proto
 

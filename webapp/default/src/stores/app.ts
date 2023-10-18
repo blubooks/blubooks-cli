@@ -2,8 +2,9 @@
 
 import { defineStore } from 'pinia'
 import appService from '../services/app.service'
-import  { ModelContent, ModelNavi, ModelPage, ModelSearch } from '../models/navi'
+import  { ModelNavi, ModelPage, ModelSearch } from '../models/navi'
 import  { Person } from '../models/person'
+import  { PageContent } from '../models/content'
 
 /*
 function isObjEmpty (obj: any) {
@@ -63,14 +64,14 @@ export const useAppStore = defineStore('app', {
     isRequesting: false,
     isLoading: false,
     navi: {} as ModelNavi,
-    content: {} as ModelContent,
+    content: {} as PageContent,
     currentParents: [] as Array<ModelPage>,
     currentPage: {} as ModelPage,
     currentBook: {} as ModelPage,
     pagesIdx: new Map<string, string>(),
     pages: new Map<string, ModelPage>(),
     books: new Map<string, ModelPage>(),
-    contents: new Map<string, ModelContent>(),
+    contents: new Map<string, PageContent>(),
     searchOpened: false,
     searchResult: [] as Array<ModelSearch>,
     searchData: [] as Array<ModelSearch>,
@@ -154,6 +155,26 @@ export const useAppStore = defineStore('app', {
         }
       }
 
+      return appService.loadBinary(this.pagesIdx.get(path)+ "").then(
+        (response: any) => {
+
+          let data = new Uint8Array(response.data);
+  
+          let content = PageContent.fromBinary(data)
+
+          console.log(content)
+
+          this.content = content
+          this.contents.set(this.content.id, this.content)
+          this.openNavi(path)
+
+        },
+        (err: any) => {
+          return Promise.reject(err);
+        }
+      )
+      /*
+
       return appService.loadJson(this.pagesIdx.get(path) + ".json").then(
         (response: any) => {
           this.content = <ModelContent>response.data
@@ -165,6 +186,7 @@ export const useAppStore = defineStore('app', {
           return Promise.reject(err);
         }
       )
+      */
     }, 
     loadNavi(){
 
@@ -204,6 +226,14 @@ export const useAppStore = defineStore('app', {
         return appService.loadJson(this.navi.searchId + ".json").then(
           (response: any) => {
             
+
+            let data = new Uint8Array(response.data);
+  
+            let person = Person.fromBinary(data)
+  
+  
+            console.log(person)
+
             let searchData = <Array<ModelSearch>>response.data;  
             this.searchData = searchData
            
@@ -216,36 +246,7 @@ export const useAppStore = defineStore('app', {
       return Promise.reject(); 
     },  
      
-    loadPerson() {
 
-
-
-      return appService.loadBinary().then(
-        (response: any) => {
-          let data = new Uint8Array(response.data);
-          console.log(data)
-
-          let person = Person.fromBinary(data)
-
-
-          console.log(person)
-          /*
-         let  person = Person.deserializeBinary(response.data)
-
-      
-          console.log(response.data)
-          console.log(person)
-          */
-          //let searchData = <Array<ModelSearch>>response.data;  
-          //this.searchData = searchData
-         
-        },
-        (err: any) => {
-          return Promise.reject(err);
-        }
-      )   
-
-    },
     prepareNavi(pages: Array<ModelPage>, level: number, showLevel: number) {
       level = level +1;
       pages.forEach(page => {
