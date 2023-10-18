@@ -2,11 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v4.24.4
-// source: person.proto
+// source: proto/person.proto
 
-//protoc --go_out=. --go_opt=paths=source_relative   --go-grpc_out=. --go-grpc_opt=paths=source_relative  person.proto
-
-package app
+package models
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -34,7 +32,7 @@ type Person struct {
 func (x *Person) Reset() {
 	*x = Person{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_person_proto_msgTypes[0]
+		mi := &file_proto_person_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -47,7 +45,7 @@ func (x *Person) String() string {
 func (*Person) ProtoMessage() {}
 
 func (x *Person) ProtoReflect() protoreflect.Message {
-	mi := &file_person_proto_msgTypes[0]
+	mi := &file_proto_person_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -60,7 +58,7 @@ func (x *Person) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Person.ProtoReflect.Descriptor instead.
 func (*Person) Descriptor() ([]byte, []int) {
-	return file_person_proto_rawDescGZIP(), []int{0}
+	return file_proto_person_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Person) GetName() string {
@@ -77,33 +75,34 @@ func (x *Person) GetAge() int32 {
 	return 0
 }
 
-var File_person_proto protoreflect.FileDescriptor
+var File_proto_person_proto protoreflect.FileDescriptor
 
-var file_person_proto_rawDesc = []byte{
-	0x0a, 0x0c, 0x70, 0x65, 0x72, 0x73, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x03,
-	0x61, 0x70, 0x70, 0x22, 0x2e, 0x0a, 0x06, 0x50, 0x65, 0x72, 0x73, 0x6f, 0x6e, 0x12, 0x12, 0x0a,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d,
-	0x65, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03,
-	0x61, 0x67, 0x65, 0x42, 0x03, 0x5a, 0x01, 0x2f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+var file_proto_person_proto_rawDesc = []byte{
+	0x0a, 0x12, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x70, 0x65, 0x72, 0x73, 0x6f, 0x6e, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x03, 0x61, 0x70, 0x70, 0x22, 0x2e, 0x0a, 0x06, 0x50, 0x65, 0x72,
+	0x73, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x67, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x05, 0x52, 0x03, 0x61, 0x67, 0x65, 0x42, 0x09, 0x5a, 0x07, 0x2f, 0x6d, 0x6f,
+	0x64, 0x65, 0x6c, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_person_proto_rawDescOnce sync.Once
-	file_person_proto_rawDescData = file_person_proto_rawDesc
+	file_proto_person_proto_rawDescOnce sync.Once
+	file_proto_person_proto_rawDescData = file_proto_person_proto_rawDesc
 )
 
-func file_person_proto_rawDescGZIP() []byte {
-	file_person_proto_rawDescOnce.Do(func() {
-		file_person_proto_rawDescData = protoimpl.X.CompressGZIP(file_person_proto_rawDescData)
+func file_proto_person_proto_rawDescGZIP() []byte {
+	file_proto_person_proto_rawDescOnce.Do(func() {
+		file_proto_person_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_person_proto_rawDescData)
 	})
-	return file_person_proto_rawDescData
+	return file_proto_person_proto_rawDescData
 }
 
-var file_person_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
-var file_person_proto_goTypes = []interface{}{
+var file_proto_person_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_proto_person_proto_goTypes = []interface{}{
 	(*Person)(nil), // 0: app.Person
 }
-var file_person_proto_depIdxs = []int32{
+var file_proto_person_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -111,13 +110,13 @@ var file_person_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_person_proto_init() }
-func file_person_proto_init() {
-	if File_person_proto != nil {
+func init() { file_proto_person_proto_init() }
+func file_proto_person_proto_init() {
+	if File_proto_person_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_person_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_proto_person_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Person); i {
 			case 0:
 				return &v.state
@@ -134,18 +133,18 @@ func file_person_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_person_proto_rawDesc,
+			RawDescriptor: file_proto_person_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_person_proto_goTypes,
-		DependencyIndexes: file_person_proto_depIdxs,
-		MessageInfos:      file_person_proto_msgTypes,
+		GoTypes:           file_proto_person_proto_goTypes,
+		DependencyIndexes: file_proto_person_proto_depIdxs,
+		MessageInfos:      file_proto_person_proto_msgTypes,
 	}.Build()
-	File_person_proto = out.File
-	file_person_proto_rawDesc = nil
-	file_person_proto_goTypes = nil
-	file_person_proto_depIdxs = nil
+	File_proto_person_proto = out.File
+	file_proto_person_proto_rawDesc = nil
+	file_proto_person_proto_goTypes = nil
+	file_proto_person_proto_depIdxs = nil
 }

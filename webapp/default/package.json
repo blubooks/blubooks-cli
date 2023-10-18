@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "protoc": "protoc --ts_out src/models --proto_path ../../proto/  person.proto"
   },
   "dependencies": {
     "axios": "^1.5.1",

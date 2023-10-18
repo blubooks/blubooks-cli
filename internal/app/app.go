@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/blubooks/blubooks-cli/internal/app/models"
 	"github.com/blubooks/blubooks-cli/pkg/goldmark/baseurl"
 	"github.com/segmentio/ksuid"
 	meta "github.com/yuin/goldmark-meta"
@@ -168,7 +169,7 @@ func Build(dev bool) error {
 		}
 	*/
 
-	elliot := &Person{
+	elliot := &models.Person{
 		Name: "Elliot",
 		Age:  24,
 	}
@@ -179,7 +180,7 @@ func Build(dev bool) error {
 
 	fmt.Println("dddddddddddddddddd", data)
 
-	newElliot := &Person{}
+	newElliot := &models.Person{}
 	err = proto.Unmarshal(data, newElliot)
 	if err != nil {
 		log.Fatal("unmarshaling error: ", err)
