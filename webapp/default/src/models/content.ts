@@ -101,6 +101,14 @@ export interface Page {
      * @generated from protobuf field: bool activeParent = 21;
      */
     activeParent: boolean;
+    /**
+     * @generated from protobuf field: bool set = 31;
+     */
+    set: boolean;
+    /**
+     * @generated from protobuf field: app.Page parentPage = 32;
+     */
+    parentPage?: Page;
 }
 /**
  * @generated from protobuf message app.Options
@@ -296,11 +304,13 @@ class Page$Type extends MessageType<Page> {
             { no: 9, name: "pages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Page },
             { no: 10, name: "data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 20, name: "show", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 21, name: "activeParent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 21, name: "activeParent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 31, name: "set", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 32, name: "parentPage", kind: "message", T: () => Page }
         ]);
     }
     create(value?: PartialMessage<Page>): Page {
-        const message = { id: "", title: "", parent: "", parentId: "", level: 0, type: "", link: "", extern: false, pages: [], data: "", show: false, activeParent: false };
+        const message = { id: "", title: "", parent: "", parentId: "", level: 0, type: "", link: "", extern: false, pages: [], data: "", show: false, activeParent: false, set: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Page>(this, message, value);
@@ -346,6 +356,12 @@ class Page$Type extends MessageType<Page> {
                     break;
                 case /* bool activeParent */ 21:
                     message.activeParent = reader.bool();
+                    break;
+                case /* bool set */ 31:
+                    message.set = reader.bool();
+                    break;
+                case /* app.Page parentPage */ 32:
+                    message.parentPage = Page.internalBinaryRead(reader, reader.uint32(), options, message.parentPage);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -395,6 +411,12 @@ class Page$Type extends MessageType<Page> {
         /* bool activeParent = 21; */
         if (message.activeParent !== false)
             writer.tag(21, WireType.Varint).bool(message.activeParent);
+        /* bool set = 31; */
+        if (message.set !== false)
+            writer.tag(31, WireType.Varint).bool(message.set);
+        /* app.Page parentPage = 32; */
+        if (message.parentPage)
+            Page.internalBinaryWrite(message.parentPage, writer.tag(32, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

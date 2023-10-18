@@ -60,7 +60,6 @@ type Page struct {
 	Pages      []Page  `json:"pages,omitempty"`
 }
 
-/*
 type Navi struct {
 	Title       *string  `json:"title,omitempty"`
 	Description string   `json:"description,omitempty"`
@@ -71,7 +70,6 @@ type Navi struct {
 	Options     *Options `json:"options,omitempty"`
 	SearchId    *string  `json:"searchId,omitempty"`
 }
-
 
 func getUrlId(url string) string {
 	if val, ok := naviUrlIds[url]; ok {
