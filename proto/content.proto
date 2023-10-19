@@ -51,4 +51,12 @@ message Navi {
       string searchId = 9;
 
 }
-
+message SearchPage {
+      string id = 1;
+      string title = 2;      
+      string text = 3;      
+      string path = 4;      
+}
+message SearchList {
+      repeated SearchPage pages = 1; 
+}

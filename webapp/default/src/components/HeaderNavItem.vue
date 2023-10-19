@@ -38,11 +38,11 @@ defineProps({
                 <div class="bl-inner-item" :class="{ 'link': pg.link }">
                     <a v-if="pg.link" href="#" :class="{  'active-item': pg.link == route.path, 'active-parent-item': pg.activeParent  }" :to="pg.link"
                         @click.prevent="$emit('navi', pg)">
-                        {{ pg.title }}
+                        {{ pg.title }} 
                     </a>
                     <span class="title" v-else  :class="{ 'active-item':appStore.currentBook.id == pg.id }"   @click="$emit('navi', pg)">{{ pg.title }}</span>
                 </div>
-                <HeaderNavItem v-if="pg.pages" :pages="pg.pages" :page="pg" :level="level + 1" @navi="navi" />
+                <HeaderNavItem v-if="pg.pages && pg.pages.length && pg.pages.length > 0" :pages="pg.pages" :page="pg" :level="level + 1" @navi="navi" />
             </li>
         </template>
     </ul>

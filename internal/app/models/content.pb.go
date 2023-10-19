@@ -463,6 +463,124 @@ func (x *Navi) GetSearchId() string {
 	return ""
 }
 
+type SearchPage struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Text  string `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
+	Path  string `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
+}
+
+func (x *SearchPage) Reset() {
+	*x = SearchPage{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_content_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SearchPage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchPage) ProtoMessage() {}
+
+func (x *SearchPage) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_content_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchPage.ProtoReflect.Descriptor instead.
+func (*SearchPage) Descriptor() ([]byte, []int) {
+	return file_proto_content_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SearchPage) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *SearchPage) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *SearchPage) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+func (x *SearchPage) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+type SearchList struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Pages []*SearchPage `protobuf:"bytes,1,rep,name=pages,proto3" json:"pages,omitempty"`
+}
+
+func (x *SearchList) Reset() {
+	*x = SearchList{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_content_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SearchList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchList) ProtoMessage() {}
+
+func (x *SearchList) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_content_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchList.ProtoReflect.Descriptor instead.
+func (*SearchList) Descriptor() ([]byte, []int) {
+	return file_proto_content_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *SearchList) GetPages() []*SearchPage {
+	if x != nil {
+		return x.Pages
+	}
+	return nil
+}
+
 var File_proto_content_proto protoreflect.FileDescriptor
 
 var file_proto_content_proto_rawDesc = []byte{
@@ -522,8 +640,17 @@ var file_proto_content_proto_rawDesc = []byte{
 	0x6e, 0x73, 0x18, 0x08, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x61, 0x70, 0x70, 0x2e, 0x4f,
 	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12,
 	0x1a, 0x0a, 0x08, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68, 0x49, 0x64, 0x18, 0x09, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x08, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68, 0x49, 0x64, 0x42, 0x09, 0x5a, 0x07, 0x2f,
-	0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x09, 0x52, 0x08, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68, 0x49, 0x64, 0x22, 0x5a, 0x0a, 0x0a, 0x53,
+	0x65, 0x61, 0x72, 0x63, 0x68, 0x50, 0x61, 0x67, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74,
+	0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12,
+	0x12, 0x0a, 0x04, 0x74, 0x65, 0x78, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74,
+	0x65, 0x78, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x22, 0x33, 0x0a, 0x0a, 0x53, 0x65, 0x61, 0x72, 0x63,
+	0x68, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x25, 0x0a, 0x05, 0x70, 0x61, 0x67, 0x65, 0x73, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x61, 0x70, 0x70, 0x2e, 0x53, 0x65, 0x61, 0x72, 0x63,
+	0x68, 0x50, 0x61, 0x67, 0x65, 0x52, 0x05, 0x70, 0x61, 0x67, 0x65, 0x73, 0x42, 0x09, 0x5a, 0x07,
+	0x2f, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -538,29 +665,32 @@ func file_proto_content_proto_rawDescGZIP() []byte {
 	return file_proto_content_proto_rawDescData
 }
 
-var file_proto_content_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_content_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_proto_content_proto_goTypes = []interface{}{
 	(*PageTocItem)(nil), // 0: app.PageTocItem
 	(*PageContent)(nil), // 1: app.PageContent
 	(*Page)(nil),        // 2: app.Page
 	(*Options)(nil),     // 3: app.Options
 	(*Navi)(nil),        // 4: app.Navi
+	(*SearchPage)(nil),  // 5: app.SearchPage
+	(*SearchList)(nil),  // 6: app.SearchList
 }
 var file_proto_content_proto_depIdxs = []int32{
-	0, // 0: app.PageTocItem.items:type_name -> app.PageTocItem
-	0, // 1: app.PageContent.toc:type_name -> app.PageTocItem
-	2, // 2: app.Page.pages:type_name -> app.Page
-	2, // 3: app.Page.parentPage:type_name -> app.Page
-	2, // 4: app.Navi.header:type_name -> app.Page
-	2, // 5: app.Navi.footer:type_name -> app.Page
-	2, // 6: app.Navi.pages:type_name -> app.Page
-	2, // 7: app.Navi.root:type_name -> app.Page
-	3, // 8: app.Navi.options:type_name -> app.Options
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	0,  // 0: app.PageTocItem.items:type_name -> app.PageTocItem
+	0,  // 1: app.PageContent.toc:type_name -> app.PageTocItem
+	2,  // 2: app.Page.pages:type_name -> app.Page
+	2,  // 3: app.Page.parentPage:type_name -> app.Page
+	2,  // 4: app.Navi.header:type_name -> app.Page
+	2,  // 5: app.Navi.footer:type_name -> app.Page
+	2,  // 6: app.Navi.pages:type_name -> app.Page
+	2,  // 7: app.Navi.root:type_name -> app.Page
+	3,  // 8: app.Navi.options:type_name -> app.Options
+	5,  // 9: app.SearchList.pages:type_name -> app.SearchPage
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_proto_content_proto_init() }
@@ -629,6 +759,30 @@ func file_proto_content_proto_init() {
 				return nil
 			}
 		}
+		file_proto_content_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SearchPage); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_content_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SearchList); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -636,7 +790,7 @@ func file_proto_content_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_content_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

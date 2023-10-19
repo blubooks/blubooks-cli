@@ -160,6 +160,36 @@ export interface Navi {
      */
     searchId: string;
 }
+/**
+ * @generated from protobuf message app.SearchPage
+ */
+export interface SearchPage {
+    /**
+     * @generated from protobuf field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: string title = 2;
+     */
+    title: string;
+    /**
+     * @generated from protobuf field: string text = 3;
+     */
+    text: string;
+    /**
+     * @generated from protobuf field: string path = 4;
+     */
+    path: string;
+}
+/**
+ * @generated from protobuf message app.SearchList
+ */
+export interface SearchList {
+    /**
+     * @generated from protobuf field: repeated app.SearchPage pages = 1;
+     */
+    pages: SearchPage[];
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class PageTocItem$Type extends MessageType<PageTocItem> {
     constructor() {
@@ -577,3 +607,118 @@ class Navi$Type extends MessageType<Navi> {
  * @generated MessageType for protobuf message app.Navi
  */
 export const Navi = new Navi$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SearchPage$Type extends MessageType<SearchPage> {
+    constructor() {
+        super("app.SearchPage", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SearchPage>): SearchPage {
+        const message = { id: "", title: "", text: "", path: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<SearchPage>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SearchPage): SearchPage {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* string title */ 2:
+                    message.title = reader.string();
+                    break;
+                case /* string text */ 3:
+                    message.text = reader.string();
+                    break;
+                case /* string path */ 4:
+                    message.path = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SearchPage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string title = 2; */
+        if (message.title !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.title);
+        /* string text = 3; */
+        if (message.text !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.text);
+        /* string path = 4; */
+        if (message.path !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.path);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message app.SearchPage
+ */
+export const SearchPage = new SearchPage$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SearchList$Type extends MessageType<SearchList> {
+    constructor() {
+        super("app.SearchList", [
+            { no: 1, name: "pages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => SearchPage }
+        ]);
+    }
+    create(value?: PartialMessage<SearchList>): SearchList {
+        const message = { pages: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<SearchList>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SearchList): SearchList {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated app.SearchPage pages */ 1:
+                    message.pages.push(SearchPage.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SearchList, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated app.SearchPage pages = 1; */
+        for (let i = 0; i < message.pages.length; i++)
+            SearchPage.internalBinaryWrite(message.pages[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message app.SearchList
+ */
+export const SearchList = new SearchList$Type();

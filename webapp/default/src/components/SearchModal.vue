@@ -35,18 +35,18 @@
 </template>
   
 <script setup lang="ts">
-import { ModelSearch } from "../models/navi";
+import { SearchPage } from "../models/content";
 import { useAppStore } from "../stores/app";
 import { onMounted, ref } from 'vue'
 import { debounce, copyObject } from '../utils/helper'
 
 const emit = defineEmits(['navi'])
-const result = ref([] as Array<ModelSearch>)
+const result = ref([] as Array<SearchPage>)
 const searchText = ref("")
 const debounceFn = ref()
 const appStore = useAppStore()
 
-function navi(p: ModelSearch) {
+function navi(p: SearchPage) {
     const v = appStore.pages.get(p.id);
     if (v && v.link) {
         appStore.searchOpened = false
@@ -104,20 +104,20 @@ onMounted(() => {
             return
         }
 
-        if (appStore.searchData.length == 0) {
+        if (appStore.searchList.pages.length == 0) {
             result.value = []
             return
         }
 
-        let res = [] as Array<ModelSearch>
+        let res = [] as Array<SearchPage>
         pattern = pattern.toLowerCase()
         pattern = '*' + pattern.replace(" ", "*").trim() + '*';
 
         console.log("PATTEN", pattern)
 
         //@ts-ignore
-        for (let i = 0; i < appStore.searchData.length; ++i) {
-            const value = appStore.searchData[i]
+        for (let i = 0; i < appStore.searchList.pages.length; ++i) {
+            const value = appStore.searchList.pages[i]
             let mateched = false
             if (isMatch(value.title.toLowerCase(), pattern)) {
                 mateched = true

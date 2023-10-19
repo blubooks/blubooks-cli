@@ -44,7 +44,7 @@ defineProps({
                     <span class="title" v-else :class="{ 'bl-group-text': pg && pg.type == 'group', 'active-parent-item': pg.activeParent }" @click="navi(pg)">{{
                         pg.title }}</span>
                 </div>
-                <NaviItem v-if="pg.pages && pg.show" :pages="pg.pages" :page="pg" :level="level + 1" @navi="navi" />
+                <NaviItem v-if="pg.pages && pg.pages.length && pg.pages.length > 0 && pg.show" :pages="pg.pages" :page="pg" :level="level + 1" @navi="navi" />
             </li>
         </template>
     </ul>

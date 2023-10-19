@@ -2,9 +2,7 @@
 
 import { defineStore } from 'pinia'
 import appService from '../services/app.service'
-import  { ModelSearch } from '../models/navi'
-import  { Person } from '../models/person'
-import  { PageContent, Navi, Page } from '../models/content'
+import  { PageContent, Navi, Page, SearchPage, SearchList } from '../models/content'
 
 /*
 function isObjEmpty (obj: any) {
@@ -73,8 +71,8 @@ export const useAppStore = defineStore('app', {
     books: new Map<string, Page>(),
     contents: new Map<string, PageContent>(),
     searchOpened: false,
-    searchResult: [] as Array<ModelSearch>,
-    searchData: [] as Array<ModelSearch>,
+    searchResult: [] as Array<SearchPage>,
+    searchList: {} as SearchList
   }),
   getters: {
 
@@ -216,24 +214,15 @@ export const useAppStore = defineStore('app', {
      
     },
     loadSearch(){
-      if (this.searchData.length > 0) {
+      if (this.searchList && this.searchList.pages && this.searchList.pages.length && this.searchList.pages.length > 0) {
         return Promise.resolve();    
       }
       if (this.navi.searchId) {
-        return appService.loadJson(this.navi.searchId + ".json").then(
+        return appService.loadBinary(this.navi.searchId).then(
           (response: any) => {
-            
-
-            let data = new Uint8Array(response.data);
-  
-            let person = Person.fromBinary(data)
-  
-  
-            console.log(person)
-
-            let searchData = <Array<ModelSearch>>response.data;  
-            this.searchData = searchData
-           
+            let data = new Uint8Array(response.data);  
+            this.searchList = SearchList.fromBinary(data)
+         
           },
           (err: any) => {
             return Promise.reject(err);

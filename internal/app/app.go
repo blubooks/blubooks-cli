@@ -43,12 +43,6 @@ func New() *App {
 	return &App{}
 }
 
-type SearchPage struct {
-	Title string `json:"title,omitempty"`
-	Text  string `json:"text,omitempty"`
-	Id    string `json:"id"`
-	Path  string `json:"path"`
-}
 type PagePDF struct {
 	Title string `json:"title,omitempty"`
 	Text  string `json:"text,omitempty"`
@@ -62,10 +56,10 @@ type PDF struct {
 	Pages    string `json:"page"`
 }
 
-var search map[string]SearchPage
+var search map[string]*models.SearchPage
 
 func Build(dev bool) error {
-	search = make(map[string]SearchPage)
+	search = make(map[string]*models.SearchPage)
 	navi, err := genNavi()
 	if err != nil {
 		return err
@@ -105,22 +99,24 @@ func Build(dev bool) error {
 		genPage(navi.Root)
 	}
 
-	var searchResults []SearchPage
+	var searchList = models.SearchList{}
+
 	for _, v := range search {
-		searchResults = append(searchResults, v)
+		searchList.Pages = append(searchList.Pages, v)
 	}
 
-	searchBytes, err := json.Marshal(searchResults)
+	data, err := proto.Marshal(&searchList)
 	if err != nil {
-		return err
+		log.Printf("Error in err, proto.Marshal(&c): %v", err)
 	}
 
 	searchId := ksuid.New().String()
-	err = os.WriteFile("public/api/"+searchId+".json", searchBytes, os.ModePerm)
-	if err == nil {
-		navi.SearchId = &searchId
+
+	err = os.WriteFile("public/api/"+searchId, data, os.ModePerm)
+	if err != nil {
+		log.Printf("Error in err,os.WriteFile(\"public/api/"+searchId+", data, os.ModePerm): %v", err)
 	} else {
-		log.Println(err)
+		navi.SearchId = &searchId
 	}
 
 	naviBytes, err := json.Marshal(navi)
@@ -131,7 +127,7 @@ func Build(dev bool) error {
 	naviProto := &models.Navi{}
 	json.Unmarshal(naviBytes, naviProto)
 
-	data, err := proto.Marshal(naviProto)
+	data, err = proto.Marshal(naviProto)
 	if err != nil {
 		return err
 	}
@@ -162,39 +158,6 @@ func writeJson(filename string, id string) {
 	if err != nil {
 		log.Printf("Error in err, os.WriteFile(\"public/api/"+id+".json\", cJson, os.ModePerm): %v", err)
 	}
-	/*
-		var c PageContent
-
-		err = loadMarkdown(filename, &c)
-		if err != nil {
-			log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
-		}
-
-		c.Id = id
-		cJson, err := json.Marshal(c)
-		if err != nil {
-			log.Printf("Error in err, json.Marshal(c): %v", err)
-		}
-
-		err = os.WriteFile("public/api/"+id+".json", cJson, os.ModePerm)
-		if err != nil {
-			log.Printf("Error in err, os.WriteFile(\"public/api/"+id+".json\", cJson, os.ModePerm): %v", err)
-		}
-
-		myProto := &models.PageContent{}
-		json.Unmarshal(cJson, myProto)
-
-		data, err := proto.Marshal(myProto)
-		if err != nil {
-			log.Printf("Error in err, proto.Marshal(myProto): %v", err)
-		}
-
-		err = os.WriteFile("public/api/"+id, data, os.ModePerm)
-		if err != nil {
-			log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
-		}
-	*/
-
 }
 
 func genPage(s *Page) {
@@ -203,7 +166,7 @@ func genPage(s *Page) {
 
 		_, ok := search[s.Id]
 		if !ok {
-			var searchPage SearchPage
+			var searchPage models.SearchPage
 
 			searchPage.Id = s.Id
 			searchPage.Title = *s.Title
@@ -233,7 +196,7 @@ func genPage(s *Page) {
 				searchPage.Text = strings.Trim(searchPage.Text, " ")
 
 			}
-			search[s.Id] = searchPage
+			search[s.Id] = &searchPage
 
 		}
 
