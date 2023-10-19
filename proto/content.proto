@@ -51,3 +51,4 @@ message Navi {
       string searchId = 9;
 
 }
+

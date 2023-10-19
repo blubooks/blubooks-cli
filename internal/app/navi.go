@@ -282,9 +282,9 @@ func genNavi() (*Navi, error) {
 						Type:  TypeBook,
 						Title: &t,
 					}
-					p := book
+					//p := book
 
-					navi.Header = append(navi.Header, p)
+					navi.Header = append(navi.Header, book)
 
 				} else if h.Level == 3 {
 					if book.Set {
