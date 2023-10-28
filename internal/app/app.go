@@ -140,7 +140,7 @@ func Build(dev bool) error {
 
 }
 
-func writeJson(filename string, id string) {
+func writeJson(filename string, s *Page) {
 	var err error
 	var c models.PageContent
 
@@ -149,20 +149,22 @@ func writeJson(filename string, id string) {
 		log.Printf("Error in err, page() -> loadMarkdown(): %v", err)
 	}
 
+	c.Id = s.Id
+	c.Title = *s.Title
 	data, err := proto.Marshal(&c)
 	if err != nil {
 		log.Printf("Error in err, proto.Marshal(&c): %v", err)
 	}
 
-	err = os.WriteFile("public/api/"+id, data, os.ModePerm)
+	err = os.WriteFile("public/api/"+s.Id, data, os.ModePerm)
 	if err != nil {
-		log.Printf("Error in err, os.WriteFile(\"public/api/"+id+".json\", cJson, os.ModePerm): %v", err)
+		log.Printf("Error in err, os.WriteFile(\"public/api/"+s.Id+".json\", cJson, os.ModePerm): %v", err)
 	}
 }
 
 func genPage(s *Page) {
 	if s.Link != nil && s.DataLink != nil {
-		writeJson(*s.DataLink, s.Id)
+		writeJson(*s.DataLink, s)
 
 		_, ok := search[s.Id]
 		if !ok {

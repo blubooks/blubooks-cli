@@ -3,6 +3,7 @@
 import { defineStore } from 'pinia'
 import appService from '../services/app.service'
 import  { PageContent, Navi, Page, SearchPage, SearchList } from '../models/content'
+import { ModelPage } from '../models/navi'
 
 /*
 function isObjEmpty (obj: any) {
@@ -63,12 +64,12 @@ export const useAppStore = defineStore('app', {
     isLoading: false,
     navi: {} as Navi,
     content: {} as PageContent,
-    currentParents: [] as Array<Page>,
-    currentPage: {} as Page,
-    currentBook: {} as Page,
+    currentParents: [] as Array<ModelPage>,
+    currentPage: {} as ModelPage,
+    currentBook: {} as ModelPage,
     pagesIdx: new Map<string, string>(),
-    pages: new Map<string, Page>(),
-    books: new Map<string, Page>(),
+    pages: new Map<string, ModelPage>(),
+    books: new Map<string, ModelPage>(),
     contents: new Map<string, PageContent>(),
     searchOpened: false,
     searchResult: [] as Array<SearchPage>,
@@ -133,7 +134,25 @@ export const useAppStore = defineStore('app', {
         });
       }
       find(this.navi.pages)
-    },    
+    },   
+    loadPage(path: string)  {
+      if (!this.pagesIdx.has(path)) {
+        return Promise.reject();
+      }
+      const id = this.pagesIdx.get(path)
+
+      if (!id) {
+        return Promise.reject();
+      }
+
+      if (this.contents.has(id)) {
+        const c = this.contents.get(id);
+        if (c) {
+          this.content = c;
+          return Promise.resolve();
+        }
+      }
+    },
     loadContent(path: string) {
       if (!this.pagesIdx.has(path)) {
         return Promise.reject();

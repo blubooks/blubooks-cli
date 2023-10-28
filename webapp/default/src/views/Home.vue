@@ -29,6 +29,10 @@
         
                 <aside id="bl-sidebar" class="bl-sidebar" >
                     <div class="bl-inner">
+                        
+                        <a  href="#" @click="pdf">
+                        PDF
+                        </a>
                         <Toc v-if="appStore.content.toc" :items="appStore.content.toc"  @scrolling="scrolling" />
                     </div>
                 </aside>
@@ -68,7 +72,11 @@ function scrolling(id: string) {
 
     }
 }
-
+  
+function pdf() {
+    console.log("route.path")
+    console.log(appStore.content)
+}
 
 function navi(page: ModelPage) {
 
