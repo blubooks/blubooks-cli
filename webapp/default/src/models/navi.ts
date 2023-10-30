@@ -1,6 +1,6 @@
 
 
-
+/*
 export type ModelNavi = {
     title?: string
     pages: Array<ModelPage>
@@ -12,6 +12,7 @@ export type ModelNavi = {
     searchId?: string
 };
 
+*/
 
 
 export type ModelSearch = {
@@ -23,6 +24,7 @@ export type ModelSearch = {
 
 
   
+/*
 export type ModelPage = {
     show: boolean
     activeParent: boolean
@@ -43,3 +45,4 @@ export type ModelToc = {
     items: Array<ModelToc>
 
 };
+*/

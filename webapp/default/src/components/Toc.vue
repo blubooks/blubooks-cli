@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  ModelToc } from '../models/navi'
+import {  PageTocItem } from '../models/content'
 
 
 const emit = defineEmits(['scrolling'])
@@ -15,7 +15,7 @@ function scrolling(id: string) {
 
 defineProps({
     items: {
-        type: Array<ModelToc>,
+        type: Array<PageTocItem>,
         required: true
     },  
 });

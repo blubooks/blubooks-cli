@@ -16,7 +16,9 @@ import  { Previewer } from "pagedjs";
 
 import { onMounted } from 'vue';
 
+
   onMounted(()=>{
+ 
     let paged = new Previewer(null);
   
     let flow = paged.preview(null,null,null).then((flow: any) => {
@@ -25,6 +27,7 @@ import { onMounted } from 'vue';
     })
 
     console.log(flow)
+  
   });
 
 
@@ -46,7 +49,7 @@ import { onMounted } from 'vue';
 
  
 </style>
-<style lang="css">
+<style lang="css" scope>
 
 
   

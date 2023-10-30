@@ -19,7 +19,7 @@ class AppService {
         'Expires': '0',
       },
     }).finally(() => {
-      appStore.endLoad()
+      appStore.endLoading()
     });
   }
 
@@ -30,7 +30,7 @@ class AppService {
     return api.get("api/" + filename, {
       responseType: 'arraybuffer',
     }).finally(() => {
-      appStore.endLoad()
+      appStore.endLoading()
     });
   }
 
@@ -39,7 +39,7 @@ class AppService {
   const appStore = useAppStore()
   appStore.startLoading()
   return api.get("api/" + filename).finally(() => {
-    appStore.endLoad()
+    appStore.endLoading()
   });
 }
 

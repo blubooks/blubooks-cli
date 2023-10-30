@@ -9,20 +9,10 @@ const routes = [
       requiresAuth: true
     },
     component: () => import("../views/Home.vue"),
-  },
-  {
-    name: "Print",
-    path: "/p/:pathMatch(.*)",
-    component: () => import("../views/Print.vue"),
   }, 
   {
-    name: "Print",
-    path: "/p",
-    component: () => import("../views/Print.vue"),
-  },   
-  {
-    name: "Print",
-    path: "/p/:pathMatch(.*)",
+    name: "print",
+    path: "/_doc/:pathMatch(.*)",
     component: () => import("../views/Print.vue"),
   },     
   {
